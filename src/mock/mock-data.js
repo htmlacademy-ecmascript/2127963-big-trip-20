@@ -5,7 +5,7 @@ const PRICE_MIN = 500;
 const PRICE_MAX = 10000;
 const PHOTO_ID_MIN = 1;
 const PHOTO_ID_MAX = 100;
-const POINTS_NUMBER = 10;
+const MOCK_POINTS_NUMBER = 10;
 const OFFERS_BY_TYPE_MIN = 0;
 const OFFERS_BY_TYPE_MAX = 3;
 
@@ -38,7 +38,42 @@ const DESCRIPTIONS = [
   'is a lovely place',
 ];
 
+const generatedMockOffers = [];
+OFFERS.forEach((offer, i) => {
+  const generatedOffer = {
+    id: `${i + 1}`,
+    title: offer,
+    price: getRandomInteger(PRICE_MIN, PRICE_MAX)
+  };
+  generatedMockOffers.push(generatedOffer);
+});
+
+const generateAvailableMockOffers = () => {
+  const availableOffers = [];
+  const availableOffersNumber = getRandomInteger(OFFERS_BY_TYPE_MIN, OFFERS_BY_TYPE_MAX);
+
+  while (availableOffers.length < availableOffersNumber) {
+    const availableOffer = getRandomArrayElement(generatedMockOffers);
+    if (!availableOffers.includes(availableOffer)) {
+      availableOffers.push(availableOffer);
+    }
+  }
+  return availableOffers;
+};
+
 const createMockOffers = () => {
+  const mockOffers = [];
+  POINT_TYPES.forEach((pointType) => {
+    const mockOffer = {
+      type: pointType,
+      offers: generateAvailableMockOffers()
+    };
+    mockOffers.push(mockOffer);
+  });
+
+  return mockOffers;
+};
+/*const createMockOffers = () => {
   const mockOffers = [];
   OFFERS.forEach((offer, i) => {
     const mockOffer = {
@@ -55,9 +90,9 @@ const createMockOffers = () => {
   });
 
   return mockOffers;
-};
+};*/
 
-const getRandomMockOffer = () => getRandomArrayElement(createMockOffers());
+//const getRandomMockOffer = () => getRandomArrayElement(createMockOffers());
 
 const createMockDestinations = () => {
   const mockDestinations = [];
@@ -79,7 +114,7 @@ const createMockDestinations = () => {
 
 };
 
-const getRandomMockDestination = () => getRandomArrayElement(createMockDestinations());
+//const getRandomMockDestination = () => getRandomArrayElement(createMockDestinations());
 
 const createMockOfferIds = () => {
   const mockOfferIds = [];
@@ -96,7 +131,7 @@ const createMockOfferIds = () => {
 
 const createMockPoints = () => {
   const mockPoints = [];
-  for (let i = 0; i < POINTS_NUMBER; i++) {
+  for (let i = 0; i < MOCK_POINTS_NUMBER; i++) {
     const mockPoint = {
       basePrice: getRandomInteger(PRICE_MIN, PRICE_MAX),
       dateFrom: '2019-07-10T22:55:56.845Z',
@@ -114,4 +149,4 @@ const createMockPoints = () => {
 
 const getRandomMockPoint = () => getRandomArrayElement(createMockPoints());
 
-export { getRandomMockDestination, getRandomMockOffer, getRandomMockPoint };
+export { createMockOffers, createMockDestinations, getRandomMockPoint };
