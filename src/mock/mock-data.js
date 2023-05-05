@@ -1,11 +1,11 @@
 import { getRandomInteger, getRandomArrayElement } from '../utils';
 import { POINT_TYPES } from '../const.js';
 
-const PRICE_MIN = 500;
-const PRICE_MAX = 10000;
+const PRICE_MIN = 200;
+const PRICE_MAX = 1000;
 const PHOTO_ID_MIN = 1;
 const PHOTO_ID_MAX = 100;
-const MOCK_POINTS_NUMBER = 10;
+const MOCK_POINTS_NUMBER = 7;
 const OFFERS_BY_TYPE_MIN = 0;
 const OFFERS_BY_TYPE_MAX = 3;
 
@@ -20,12 +20,11 @@ const DESTINATIONS = [
 ];
 
 const OFFERS = [
-  'Add champagne',
-  'Add books',
-  'Add breakfast',
-  'Add wine & cheese',
-  'Business class',
-  'Useful advice'
+  'Switch to comfort',
+  'Add luggage',
+  'Add meal',
+  'Choose seats',
+  'Travel by train',
 ];
 
 const DESCRIPTIONS = [
@@ -98,7 +97,7 @@ const createMockDestinations = () => {
   const mockDestinations = [];
   DESTINATIONS.forEach((destination, i) => {
     const mockDestination = {
-      id: `${i}`,
+      id: `${i + 1}`,
       name: destination,
       description: `${destination} ${DESCRIPTIONS[i]}`,
       pictures: [
@@ -134,9 +133,10 @@ const createMockPoints = () => {
   for (let i = 0; i < MOCK_POINTS_NUMBER; i++) {
     const mockPoint = {
       basePrice: getRandomInteger(PRICE_MIN, PRICE_MAX),
-      dateFrom: '2019-07-10T22:55:56.845Z',
-      dateTo: '2019-07-11T11:22:13.375Z',
-      destination: getRandomArrayElement(DESTINATIONS),
+      dateFrom: '2019-07-10T22:55:56',
+      dateTo: '2019-07-11T11:22:13',
+      //destination: getRandomArrayElement(DESTINATIONS),
+      destination: `${i + 1}`,
       isFavorite: getRandomArrayElement([true, false]),
       offers: createMockOfferIds(),
       type: getRandomArrayElement(POINT_TYPES)
