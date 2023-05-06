@@ -3,16 +3,7 @@ import { getLastWord, humanizeFullDate } from '../utils.js';
 
 const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => {
   const {type, dateFrom, dateTo, basePrice} = tripPoint;
-
-  //const selectedDestination = tripDestinations.find((tripDestination) => tripDestination.name === tripPoint.destination);
-
-  /*const getOffersByType = () => {
-    const offersByType = tripOffers.find((tripOffer) => tripOffer.type === tripPoint.type);
-    return offersByType;
-  };*/
-
-  //const availableOffers = getOffersByType().offers;
-  //const availableOffers = tripOffers;
+  const {description, pictures} = tripDestination;
 
   const renderAvailableOffers = () => {
     const renderedOffers = [];
@@ -43,60 +34,10 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
       </section>`
     : '';
 
-  /*const availableOffersContainer = '';
-    if (availableOffers.length) {
-      //availableOffersContainer =
-      return `<section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-          <div class="event__available-offers">
-          ${renderAvailableOffers()}
-          </div>
-        </section>`;
-    }*/
-  //return availableOffersContainer;
-
-  /*const getSelectedDestination = () => {
-    const selectedDestination = tripDestinations.find((tripDestination) => tripDestination.id === tripPoint.destination);
-    return selectedDestination;
-  };*/
-
-
-  /*const renderDestination = () => {
-    const selectedDestination = tripDestinations.find((tripDestination) => tripDestination.id === tripPoint.destination);
-
-    return `
-      <section class="event__section  event__section--destination">
-        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${selectedDestination.description}</p>
-      </section>
-      `;
-  };*/
-
-
-  /*const renderAvailableOffers = () => {
-    const availableOffers = [];
-    if (tripOffers.length) {
-      tripOffers.forEach((tripOffer) => {
-        const {title, price} = tripOffer;
-        const availableOffer = `<div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-          <label class="event__offer-label" for="event-offer-luggage-1">
-            <span class="event__offer-title">${title}</span>
-            &plus;&euro;&nbsp;
-            <span class="event__offer-price">${price}</span>
-          </label>
-        </div>
-          `;
-        availableOffers.push(availableOffer);
-      });
-    }
-    return availableOffers.join();
-  };*/
-
   const renderPictures = () => {
     const renderedPictures = [];
 
-    tripDestination.pictures.forEach((picture) => {
+    pictures.forEach((picture) => {
       const renderedPicture = `<img class="event__photo" src="${picture.src}" alt="${picture.description}"></img>`;
       renderedPictures.push(renderedPicture);
     });
@@ -105,22 +46,22 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
   };
 
   const renderPicturesContainer = () => {
-    if (tripDestination.pictures.length) {
+    if (pictures.length) {
 
       return (
         `<div class="event__photos-container">
           <div class="event__photos-tape">
-            '${renderPictures()}'
+            ${renderPictures()}
          </div>
         </div>`
       );
     }
   };
 
-  const renderDestionationDescriptionContainer = () => (tripDestination.description)
+  const renderDestionationDescriptionContainer = () => (description)
     ? `<section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${tripDestination.description}</p>
+          <p class="event__destination-description">${description}</p>
           ${renderPicturesContainer()}
         </section>`
     : '';
@@ -252,27 +193,3 @@ export default class EditPointFormView {
     this.element = null;
   }
 }
-
-/*export default class EditPointFormView {
-  constructor({tripPoint}, {tripOffers}) {
-    this.tripPoint = tripPoint;
-    this.tripOffers = tripOffers;
-  }
-
-  getTemplate() {
-    return createEditPointFormTemplate(this.tripPoint, this.tripOffers);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
-}*/
-

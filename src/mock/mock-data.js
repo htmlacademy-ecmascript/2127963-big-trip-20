@@ -102,7 +102,7 @@ const createMockDestinations = () => {
       description: `${destination} ${DESCRIPTIONS[i]}`,
       pictures: [
         {
-          srс: `https://loremflickr.com/248/152?random=${getRandomInteger(PHOTO_ID_MIN, PHOTO_ID_MAX)}`,
+          src: `https://loremflickr.com/248/152?random=${getRandomInteger(PHOTO_ID_MIN, PHOTO_ID_MAX)}`,
           description: `View of ${destination}.`
         }
       ]

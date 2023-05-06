@@ -6,14 +6,14 @@ dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
 const TimeFormat = {
-  days: 'DD[D] HH[H] mm[M]',
-  hours: 'HH[H] mm[M]',
-  minutes: 'mm[M]'
+  DAYS: 'DD[D] HH[H] mm[M]',
+  HOURS: 'HH[H] mm[M]',
+  MINUTES: 'mm[M]'
 };
 
 const DateFormat = {
-  monthDay: 'MMM D',
-  ddMmYyHhMh: 'DD/MM/YY HH:mm'
+  MD: 'MMM D',
+  DDMMYYHHMM: 'DD/MM/YY HH:mm'
 };
 
 const TIME_FORMAT = 'HH:mm';
@@ -25,8 +25,8 @@ const HOURS_IN_DAY = 24;
 const MSEC_IN_HOUR = MSEC_IN_SEC * SEC_IN_MIN * MIN_IN_HOUR;
 const MSEC_IN_DAY = HOURS_IN_DAY * MSEC_IN_HOUR;
 
-const humanizeDate = (date) => date ? dayjs(date).format(DateFormat.monthDay) : '';
-const humanizeFullDate = (date) => date ? dayjs(date).format(DateFormat.ddMmYyHhMh) : '';
+const humanizeDate = (date) => date ? dayjs(date).format(DateFormat.MD) : '';
+const humanizeFullDate = (date) => date ? dayjs(date).format(DateFormat.DDMMYYHHMM) : '';
 const humanizeTime = (date) => date ? dayjs(date).format(TIME_FORMAT) : '';
 
 const getDuration = (dateFrom, dateTo) => {
@@ -35,13 +35,13 @@ const getDuration = (dateFrom, dateTo) => {
 
   switch (true) {
     case (timeDifference >= MSEC_IN_DAY):
-      pointDuration = dayjs.duration(timeDifference).format(TimeFormat.days);
+      pointDuration = dayjs.duration(timeDifference).format(TimeFormat.DAYS);
       break;
     case (timeDifference >= MSEC_IN_HOUR):
-      pointDuration = dayjs.duration(timeDifference).format(TimeFormat.hours);
+      pointDuration = dayjs.duration(timeDifference).format(TimeFormat.HOURS);
       break;
     case (timeDifference < MSEC_IN_HOUR):
-      pointDuration = dayjs.duration(timeDifference).format(TimeFormat.minutes);
+      pointDuration = dayjs.duration(timeDifference).format(TimeFormat.MINUTES);
       break;
   }
 
