@@ -6,7 +6,7 @@ const createEventTemplate = (tripPoint, tripOffers, tripDestination) => {
   const {type, dateFrom, dateTo, basePrice, isFavorite} = tripPoint;
 
   const renderSelectedOffers = () => {
-    const selectedOffers = [];
+    let selectedOffers = '';
 
     tripOffers.forEach((tripOffer) => {
       const {title, price} = tripOffer;
@@ -16,9 +16,9 @@ const createEventTemplate = (tripPoint, tripOffers, tripDestination) => {
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${price}</span>
        </li>`;
-      selectedOffers.push(selectedOffer);
+      selectedOffers += selectedOffer;
     });
-    return selectedOffers.join('');
+    return selectedOffers;
   };
 
   const favoriteClassName = (isFavorite) ? 'event__favorite-btn--active' : '';
@@ -62,7 +62,7 @@ const createEventTemplate = (tripPoint, tripOffers, tripDestination) => {
 };
 
 export default class EventView {
-  constructor({tripPoint}, tripOffers, tripDestination) {
+  constructor(tripPoint, tripOffers, tripDestination) {
     this.tripPoint = tripPoint;
     this.tripOffers = tripOffers;
     this.tripDestination = tripDestination;

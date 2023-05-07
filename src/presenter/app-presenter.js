@@ -21,9 +21,9 @@ export default class AppPresenter {
 
     render(new SortingView(), this.eventContainer);
     render(this.eventListComponent, this.eventContainer);
-    render(new EditPointFormView({tripPoint: this.tripPoints[0]}, this.tripOffers, this.tripDestination), this.eventListComponent.getElement());
+    render(new EditPointFormView(this.tripPoints[0], this.tripOffers, this.tripDestination), this.eventListComponent.getElement());
     for (let i = 0; i < this.tripPoints.length; i++) {
-      render(new EventView({tripPoint: this.tripPoints[i]}, this.offerModel.getOffersByType(this.tripPoints[i]), this.destinationModel.getSelectedDestination(this.tripPoints[i])), this.eventListComponent.getElement());
+      render(new EventView(this.tripPoints[i], this.offerModel.getOffersByType(this.tripPoints[i]), this.destinationModel.getSelectedDestination(this.tripPoints[i])), this.eventListComponent.getElement());
     }
   }
 }

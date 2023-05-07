@@ -6,7 +6,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
   const {description, pictures} = tripDestination;
 
   const renderAvailableOffers = () => {
-    const renderedOffers = [];
+    let renderedOffers = '';
 
     tripOffers.forEach((tripOffer) => {
       const {id, title, price} = tripOffer;
@@ -20,9 +20,9 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
           </label>
         </div>
           `;
-      renderedOffers.push(renderedOffer);
+      renderedOffers += renderedOffer;
     });
-    return renderedOffers.join('');
+    return renderedOffers;
   };
 
   const renderAvailableOffersContainer = () => (tripOffers.length)
@@ -35,14 +35,14 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
     : '';
 
   const renderPictures = () => {
-    const renderedPictures = [];
+    let renderedPictures = '';
 
     pictures.forEach((picture) => {
       const renderedPicture = `<img class="event__photo" src="${picture.src}" alt="${picture.description}"></img>`;
-      renderedPictures.push(renderedPicture);
+      renderedPictures += renderedPicture;
     });
 
-    return renderedPictures.join('');
+    return renderedPictures;
   };
 
   const renderPicturesContainer = () => {
@@ -171,7 +171,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
 };
 
 export default class EditPointFormView {
-  constructor({tripPoint}, tripOffers, tripDestination) {
+  constructor(tripPoint, tripOffers, tripDestination) {
     this.tripPoint = tripPoint;
     this.tripOffers = tripOffers;
     this.tripDestination = tripDestination;
