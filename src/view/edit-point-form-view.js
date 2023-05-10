@@ -1,4 +1,5 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
+//import { createElement } from '../render.js';
 import { getLastWord, humanizeFullDate } from '../utils.js';
 
 const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => {
@@ -170,7 +171,24 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
   );
 };
 
-export default class EditPointFormView {
+export default class EditPointFormView extends AbstractView {
+  #tripPoint = null;
+  #tripOffers = null;
+  #tripDestination = null;
+
+  constructor(tripPoint, tripOffers, tripDestination) {
+    super();
+    this.#tripPoint = tripPoint;
+    this.#tripOffers = tripOffers;
+    this.#tripDestination = tripDestination;
+  }
+
+  get template() {
+    return createEditPointFormTemplate(this.#tripPoint, this.#tripOffers, this.#tripDestination);
+  }
+}
+
+/*export default class EditPointFormView {
   constructor(tripPoint, tripOffers, tripDestination) {
     this.tripPoint = tripPoint;
     this.tripOffers = tripOffers;
@@ -192,4 +210,4 @@ export default class EditPointFormView {
   removeElement() {
     this.element = null;
   }
-}
+}*/
