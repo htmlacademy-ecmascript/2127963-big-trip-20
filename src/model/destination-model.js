@@ -1,14 +1,14 @@
 import { createMockDestinations } from '../mock/mock-data.js';
 
 export default class DestinationModel {
-  destinations = createMockDestinations();
+  #destinations = createMockDestinations();
 
-  getDestinations () {
-    return this.destinations;
+  get destinations () {
+    return this.#destinations;
   }
 
   getSelectedDestination (tripPoint) {
-    const selectedDestination = this.destinations.find((destination) => destination.id === tripPoint.destination);
+    const selectedDestination = this.#destinations.find((destination) => destination.id === tripPoint.destination);
     return selectedDestination;
   }
 }
