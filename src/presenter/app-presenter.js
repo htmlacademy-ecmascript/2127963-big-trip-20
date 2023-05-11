@@ -32,7 +32,7 @@ export default class AppPresenter {
 
     render(new SortingView(), this.#eventContainer);
     render(this.#eventListComponent, this.#eventContainer);
-    //render(new EditPointFormView(this.tripPoints[0], this.tripOffers, this.tripDestination), this.eventListComponent.getElement());
+
     /*render(new EditPointFormView(
       this.#tripPoints[0],
       this.#tripOffers,
