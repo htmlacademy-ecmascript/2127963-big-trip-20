@@ -33,11 +33,30 @@ export default class AppPresenter {
     render(new SortingView(), this.#eventContainer);
     render(this.#eventListComponent, this.#eventContainer);
     //render(new EditPointFormView(this.tripPoints[0], this.tripOffers, this.tripDestination), this.eventListComponent.getElement());
-    render(new EditPointFormView(this.#tripPoints[0], this.#tripOffers, this.#tripDestination), this.#eventListComponent.element);
+    /*render(new EditPointFormView(
+      this.#tripPoints[0],
+      this.#tripOffers,
+      this.#tripDestination), this.#eventListComponent.element);*/
+    this.#renderTripPoint(
+      EditPointFormView,
+      this.#tripPoints[0],
+      this.#tripOffers,
+      this.#tripDestination);
+
     for (let i = 0; i < this.#tripPoints.length; i++) {
       //render(new EventView(this.tripPoints[i], this.offerModel.getOffersByType(this.tripPoints[i]), this.destinationModel.getSelectedDestination(this.tripPoints[i])), this.eventListComponent.getElement());
-      render(new EventView(this.#tripPoints[i], this.#offerModel.getOffersByType(this.#tripPoints[i]), this.#destinationModel.getSelectedDestination(this.#tripPoints[i])), this.#eventListComponent.element);
+      //render(new EventView(this.#tripPoints[i], this.#offerModel.getOffersByType(this.#tripPoints[i]), this.#destinationModel.getSelectedDestination(this.#tripPoints[i])), this.#eventListComponent.element);
+      this.#renderTripPoint(
+        EventView,
+        this.#tripPoints[i],
+        this.#offerModel.getOffersByType(this.#tripPoints[i]),
+        this.#destinationModel.getSelectedDestination(this.#tripPoints[i]));
     }
+  }
+
+  #renderTripPoint(componentView, tripPoint, tripOffers, tripDestination) {
+    const eventComponent = new componentView(tripPoint, tripOffers, tripDestination);
+    render(eventComponent, this.#eventListComponent.element);
   }
 }
 
