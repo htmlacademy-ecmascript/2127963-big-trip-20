@@ -30,7 +30,7 @@ export default class AppPresenter {
     const escKeyDownHandler = (evt) => {
       if (evt.key === 'Escape') {
         evt.preventDefault();
-        replaceFormByCard();
+        replaceFormByPoint();
         document.removeEventListener('keydown', escKeyDownHandler);
       }
     };
@@ -40,7 +40,7 @@ export default class AppPresenter {
       tripOffers,
       tripDestination,
       onEditClick: () => {
-        replaceCardByForm();
+        replacePointByForm();
         document.addEventListener('keydown', escKeyDownHandler);
       }
     });
@@ -50,20 +50,20 @@ export default class AppPresenter {
       tripOffers,
       tripDestination,
       onFormSubmit: () => {
-        replaceFormByCard();
+        replaceFormByPoint();
         document.removeEventListener('keydown', escKeyDownHandler);
       },
       onEditClick: () => {
-        replaceFormByCard();
+        replaceFormByPoint();
         document.removeEventListener('keydown', escKeyDownHandler);
       }
     });
 
-    function replaceCardByForm() {
+    function replacePointByForm() {
       replace(pointEditComponent, eventComponent);
     }
 
-    function replaceFormByCard() {
+    function replaceFormByPoint() {
       replace(eventComponent, pointEditComponent);
     }
     render(eventComponent, this.#eventListComponent.element);
