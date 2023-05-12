@@ -9,11 +9,3 @@ export default class PointModel {
     return this.#points;
   }
 }
-
-/*export default class PointModel {
-  points = Array.from({length: POINTS_NUMBER}, getRandomMockPoint);
-
-  getPoints() {
-    return this.points;
-  }
-}*/

@@ -1,5 +1,4 @@
 import AbstractView from '../framework/view/abstract-view.js';
-//import { createElement } from '../render.js';
 import { humanizeDate, humanizeTime, getDuration } from '../utils.js';
 
 const createEventTemplate = (tripPoint, tripOffers, tripDestination) => {
@@ -66,39 +65,25 @@ export default class EventView extends AbstractView {
   #tripPoint = null;
   #tripOffers = null;
   #tripDestination = null;
+  #handleEditClick = null;
 
-  constructor(tripPoint, tripOffers, tripDestination) {
+  constructor({tripPoint, tripOffers, tripDestination, onEditClick}) {
     super();
     this.#tripPoint = tripPoint;
     this.#tripOffers = tripOffers;
     this.#tripDestination = tripDestination;
+    this.#handleEditClick = onEditClick;
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editClickHandler);
   }
 
   get template() {
     return createEventTemplate(this.#tripPoint, this.#tripOffers, this.#tripDestination);
   }
+
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 }
-
-/*export default class EventView {
-  constructor(tripPoint, tripOffers, tripDestination) {
-    this.tripPoint = tripPoint;
-    this.tripOffers = tripOffers;
-    this.tripDestination = tripDestination;
-  }
-
-  getTemplate() {
-    return createEventTemplate(this.tripPoint, this.tripOffers, this.tripDestination);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
-}*/

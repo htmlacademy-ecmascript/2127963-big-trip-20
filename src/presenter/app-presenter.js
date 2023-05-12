@@ -2,11 +2,9 @@ import SortingView from '../view/sorting-view.js';
 import EventsListView from '../view/events-list-view.js';
 import EditPointFormView from '../view/edit-point-form-view.js';
 import EventView from '../view/event-view.js';
-import { render } from '../framework/render.js';
-//import { render } from '../render.js';
+import { render, replace } from '../framework/render.js';
 
 export default class AppPresenter {
-  //eventListComponent = new EventsListView();
   #eventContainer = null;
   #pointModel = null;
   #offerModel = null;
@@ -15,8 +13,6 @@ export default class AppPresenter {
   #eventListComponent = new EventsListView();
 
   #tripPoints = [];
-  #tripOffers = [];
-  #tripDestination = null;
 
   constructor({eventContainer, pointModel, offerModel, destinationModel}) {
     this.#eventContainer = eventContainer;
@@ -27,36 +23,62 @@ export default class AppPresenter {
 
   init() {
     this.#tripPoints = [...this.#pointModel.points];
-    this.#tripOffers = [...this.#offerModel.getOffersByType(this.#tripPoints[0])];
-    this.#tripDestination = this.#destinationModel.getSelectedDestination(this.#tripPoints[0]);
+    this.#renderBoard();
+  }
 
+  #renderTripPoint(tripPoint, tripOffers, tripDestination) {
+    const escKeyDownHandler = (evt) => {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        replaceFormByCard();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    };
+
+    const eventComponent = new EventView({
+      tripPoint,
+      tripOffers,
+      tripDestination,
+      onEditClick: () => {
+        replaceCardByForm();
+        document.addEventListener('keydown', escKeyDownHandler);
+      }
+    });
+
+    const pointEditComponent = new EditPointFormView({
+      tripPoint,
+      tripOffers,
+      tripDestination,
+      onFormSubmit: () => {
+        replaceFormByCard();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      },
+      onEditClick: () => {
+        replaceFormByCard();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    });
+
+    function replaceCardByForm() {
+      replace(pointEditComponent, eventComponent);
+    }
+
+    function replaceFormByCard() {
+      replace(eventComponent, pointEditComponent);
+    }
+    render(eventComponent, this.#eventListComponent.element);
+  }
+
+  #renderBoard() {
     render(new SortingView(), this.#eventContainer);
     render(this.#eventListComponent, this.#eventContainer);
 
-    /*render(new EditPointFormView(
-      this.#tripPoints[0],
-      this.#tripOffers,
-      this.#tripDestination), this.#eventListComponent.element);*/
-    this.#renderTripPoint(
-      EditPointFormView,
-      this.#tripPoints[0],
-      this.#tripOffers,
-      this.#tripDestination);
-
     for (let i = 0; i < this.#tripPoints.length; i++) {
-      //render(new EventView(this.tripPoints[i], this.offerModel.getOffersByType(this.tripPoints[i]), this.destinationModel.getSelectedDestination(this.tripPoints[i])), this.eventListComponent.getElement());
-      //render(new EventView(this.#tripPoints[i], this.#offerModel.getOffersByType(this.#tripPoints[i]), this.#destinationModel.getSelectedDestination(this.#tripPoints[i])), this.#eventListComponent.element);
       this.#renderTripPoint(
-        EventView,
         this.#tripPoints[i],
         this.#offerModel.getOffersByType(this.#tripPoints[i]),
         this.#destinationModel.getSelectedDestination(this.#tripPoints[i]));
     }
-  }
-
-  #renderTripPoint(componentView, tripPoint, tripOffers, tripDestination) {
-    const eventComponent = new componentView(tripPoint, tripOffers, tripDestination);
-    render(eventComponent, this.#eventListComponent.element);
   }
 }
 
