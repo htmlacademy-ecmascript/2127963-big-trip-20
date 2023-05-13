@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { getLastWord, humanizeFullDate } from '../utils.js';
 
 const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => {
@@ -67,7 +67,8 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
     : '';
 
   return (
-    `<form class="event event--edit" action="#" method="post">
+    `<li class="trip-events__item">
+    <form class="event event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -166,30 +167,44 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
         ${renderAvailableOffersContainer()}
         ${renderDestionationDescriptionContainer()}
       </section>
-    </form>`
+    </form>
+    </li>`
   );
 };
 
-export default class EditPointFormView {
-  constructor(tripPoint, tripOffers, tripDestination) {
-    this.tripPoint = tripPoint;
-    this.tripOffers = tripOffers;
-    this.tripDestination = tripDestination;
+export default class EditPointFormView extends AbstractView {
+  #tripPoint = null;
+  #tripOffers = null;
+  #tripDestination = null;
+  #handleFormSubmit = null;
+  #handleEditClick = null;
+
+  constructor({tripPoint, tripOffers, tripDestination, onFormSubmit, onEditClick}) {
+    super();
+    this.#tripPoint = tripPoint;
+    this.#tripOffers = tripOffers;
+    this.#tripDestination = tripDestination;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleEditClick = onEditClick;
+
+    this.element.querySelector('.event--edit')
+      .addEventListener('submit', this.#formSubmitHandler);
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editClickHandler);
   }
 
-  getTemplate() {
-    return createEditPointFormTemplate(this.tripPoint, this.tripOffers, this.tripDestination);
+  get template() {
+    return createEditPointFormTemplate(this.#tripPoint, this.#tripOffers, this.#tripDestination);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 }
