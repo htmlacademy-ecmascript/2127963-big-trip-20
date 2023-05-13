@@ -8,7 +8,6 @@ export default class DestinationModel {
   }
 
   getSelectedDestination (tripPoint) {
-    const selectedDestination = this.#destinations.find((destination) => destination.id === tripPoint.destination);
-    return selectedDestination;
+    return this.#destinations.find((destination) => destination.id === tripPoint.destination);
   }
 }
