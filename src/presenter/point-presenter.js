@@ -1,10 +1,10 @@
 import EditPointFormView from '../view/edit-point-form-view.js';
 import EventView from '../view/event-view.js';
-import { render, replace } from '../framework/render.js';
+import { render, replace, remove } from '../framework/render.js';
 
 export default class PointPresenter {
   #eventListContainer = null;
-  #pointEditComponent = null;
+  #eventEditComponent = null;
   #eventComponent = null;
 
   #tripPoint = null;
@@ -21,6 +21,9 @@ export default class PointPresenter {
     this.#tripOffers = tripOffers;
     this.#tripDestination = tripDestination;
 
+    const previousEventComponent = this.#eventComponent;
+    const previousEventEditComponent = this.#eventEditComponent;
+
 
     this.#eventComponent = new EventView({
       tripPoint: this.#tripPoint,
@@ -31,7 +34,7 @@ export default class PointPresenter {
       }
     });
 
-    this.#pointEditComponent = new EditPointFormView({
+    this.#eventEditComponent = new EditPointFormView({
       tripPoint: this.#tripPoint,
       tripOffers: this.#tripOffers,
       tripDestination: this.#tripDestination,
@@ -43,7 +46,26 @@ export default class PointPresenter {
       }
     });
 
-    render(this.#eventComponent, this.#eventListContainer);
+    if (previousEventComponent === null || previousEventEditComponent === null) {
+      render(this.#eventComponent, this.#eventListContainer);
+      return;
+    }
+
+    if (this.#eventListContainer.contains(previousEventComponent.element)) {
+      replace(this.#eventComponent, previousEventComponent);
+    }
+
+    if (this.#eventListContainer.contains(previousEventEditComponent.element)) {
+      replace(this.#eventEditComponent, previousEventEditComponent);
+    }
+
+    remove(previousEventComponent);
+    remove(previousEventEditComponent);
+  }
+
+  destroy() {
+    remove(this.#eventComponent);
+    remove(this.#eventEditComponent);
   }
 
   #escKeyDownHandler = (evt) => {
@@ -54,12 +76,12 @@ export default class PointPresenter {
   };
 
   #replacePointByForm() {
-    replace(this.#pointEditComponent, this.#eventComponent);
+    replace(this.#eventEditComponent, this.#eventComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
   }
 
   #replaceFormByPoint() {
-    replace(this.#eventComponent, this.#pointEditComponent);
+    replace(this.#eventComponent, this.#eventEditComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 }
