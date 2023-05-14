@@ -1,8 +1,9 @@
 import SortingView from '../view/sorting-view.js';
 import EventsListView from '../view/events-list-view.js';
-import EditPointFormView from '../view/edit-point-form-view.js';
-import EventView from '../view/event-view.js';
-import { render, replace } from '../framework/render.js';
+//import EditPointFormView from '../view/edit-point-form-view.js';
+//import EventView from '../view/event-view.js';
+import { render/*, replace*/ } from '../framework/render.js';
+import PointPresenter from './point-presenter.js';
 
 export default class AppPresenter {
   #eventContainer = null;
@@ -28,7 +29,11 @@ export default class AppPresenter {
   }
 
   #renderTripPoint(tripPoint, tripOffers, tripDestination) {
-    const escKeyDownHandler = (evt) => {
+    const pointPresenter = new PointPresenter({
+      eventListContainer: this.#eventListComponent.element,
+    });
+    pointPresenter.init(tripPoint, tripOffers, tripDestination);
+    /*const escKeyDownHandler = (evt) => {
       if (evt.key === 'Escape') {
         evt.preventDefault();
         replaceFormByPoint();
@@ -67,7 +72,7 @@ export default class AppPresenter {
     function replaceFormByPoint() {
       replace(eventComponent, pointEditComponent);
     }
-    render(eventComponent, this.#eventListComponent.element);
+    render(eventComponent, this.#eventListComponent.element);*/
   }
 
   #renderSort() {
