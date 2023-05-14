@@ -11,6 +11,7 @@ export default class AppPresenter {
   #destinationModel = null;
 
   #eventListComponent = new EventsListView();
+  #sortComponent = new SortingView();
 
   #tripPoints = [];
 
@@ -69,8 +70,11 @@ export default class AppPresenter {
     render(eventComponent, this.#eventListComponent.element);
   }
 
-  #renderBoard() {
-    render(new SortingView(), this.#eventContainer);
+  #renderSort() {
+    render(this.#sortComponent, this.#eventContainer);
+  }
+
+  #renderEventList() {
     render(this.#eventListComponent, this.#eventContainer);
 
     for (let i = 0; i < this.#tripPoints.length; i++) {
@@ -79,6 +83,20 @@ export default class AppPresenter {
         this.#offerModel.getOffersByType(this.#tripPoints[i]),
         this.#destinationModel.getSelectedDestination(this.#tripPoints[i]));
     }
+  }
+
+  #renderBoard() {
+    this.#renderSort();
+    this.#renderEventList();
+    //render(new SortingView(), this.#eventContainer);
+    /*render(this.#eventListComponent, this.#eventContainer);
+
+    for (let i = 0; i < this.#tripPoints.length; i++) {
+      this.#renderTripPoint(
+        this.#tripPoints[i],
+        this.#offerModel.getOffersByType(this.#tripPoints[i]),
+        this.#destinationModel.getSelectedDestination(this.#tripPoints[i]));
+    }*/
   }
 }
 
