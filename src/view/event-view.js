@@ -4,6 +4,7 @@ import { humanizeDate, humanizeTime, getDuration } from '../utils.js';
 const createEventTemplate = (tripPoint, tripOffers, tripDestination) => {
 
   const {type, dateFrom, dateTo, basePrice, isFavorite} = tripPoint;
+  const {name} = tripDestination;
 
   const renderSelectedOffers = () => {
     let selectedOffers = '';
@@ -31,7 +32,7 @@ const createEventTemplate = (tripPoint, tripOffers, tripDestination) => {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${tripDestination.name}</h3>
+      <h3 class="event__title">${type} ${name}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${dateFrom}">${humanizeTime(dateFrom)}</time>
@@ -66,16 +67,22 @@ export default class EventView extends AbstractView {
   #tripOffers = null;
   #tripDestination = null;
   #handleEditClick = null;
+  #handleFavoriteClick = null;
 
-  constructor({tripPoint, tripOffers, tripDestination, onEditClick}) {
+  constructor({tripPoint, tripOffers, tripDestination, onEditClick, onFavoriteClick}) {
     super();
     this.#tripPoint = tripPoint;
     this.#tripOffers = tripOffers;
     this.#tripDestination = tripDestination;
     this.#handleEditClick = onEditClick;
+    this.#handleFavoriteClick = onFavoriteClick;
 
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#editClickHandler);
+
+    this.element.querySelector('.event__favorite-btn')
+      .addEventListener('click', this.#favoriteClickHandler);
+
   }
 
   get template() {
@@ -85,5 +92,10 @@ export default class EventView extends AbstractView {
   #editClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleEditClick();
+  };
+
+  #favoriteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFavoriteClick();
   };
 }

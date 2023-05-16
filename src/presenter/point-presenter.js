@@ -6,14 +6,16 @@ export default class PointPresenter {
   #eventListContainer = null;
   #eventEditComponent = null;
   #eventComponent = null;
+  #handleDataChange = null;
 
   #tripPoint = null;
   #tripOffers = null;
   #tripDestination = null;
 
 
-  constructor({eventListContainer}) {
+  constructor({eventListContainer, onDataChange}) {
     this.#eventListContainer = eventListContainer;
+    this.#handleDataChange = onDataChange;
   }
 
   init(tripPoint, tripOffers, tripDestination) {
@@ -31,16 +33,15 @@ export default class PointPresenter {
       tripDestination: this.#tripDestination,
       onEditClick: () => {
         this.#replacePointByForm();
-      }
+      },
+      onFavoriteClick: this.#handleFavoriteClick
     });
 
     this.#eventEditComponent = new EditPointFormView({
       tripPoint: this.#tripPoint,
       tripOffers: this.#tripOffers,
       tripDestination: this.#tripDestination,
-      onFormSubmit: () => {
-        this.#replaceFormByPoint();
-      },
+      onFormSubmit: this.#handleFormSubmit,
       onEditClick: () => {
         this.#replaceFormByPoint();
       }
@@ -67,6 +68,15 @@ export default class PointPresenter {
     remove(this.#eventComponent);
     remove(this.#eventEditComponent);
   }
+
+  #handleFavoriteClick = () => {
+    this.#handleDataChange({...this.#tripPoint, isFavorite: !this.#tripPoint.isFavorite});
+  };
+
+  #handleFormSubmit = (tripPoint) => {
+    this.#handleDataChange(tripPoint);
+    this.#replaceFormByPoint();
+  };
 
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
