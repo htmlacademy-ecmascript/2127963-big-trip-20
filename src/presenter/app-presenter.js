@@ -31,11 +31,16 @@ export default class AppPresenter {
   #renderTripPoint(tripPoint, tripOffers, tripDestination) {
     const pointPresenter = new PointPresenter({
       eventListContainer: this.#eventListComponent.element,
-      onDataChange: this.#handlePointChange
+      onDataChange: this.#handlePointChange,
+      onModeChange: this.#handleModeChange
     });
     pointPresenter.init(tripPoint, tripOffers, tripDestination);
     this.#pointPresenters.set(tripPoint.id, pointPresenter);
   }
+
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
+  };
 
   #handlePointChange = (updatedPoint) => {
     this.#tripPoints = updateItem(this.#tripPoints, updatedPoint);
@@ -55,14 +60,11 @@ export default class AppPresenter {
 
   #renderEvents() {
     for (let i = 0; i < this.#tripPoints.length; i++) {
-      const point = this.#tripPoints[i];
-      const offers = this.#offerModel.getOffersByType(this.#tripPoints[i]);
-      const destination = this.#destinationModel.getSelectedDestination(this.#tripPoints[i]);
 
       this.#renderTripPoint(
-        point,
-        offers,
-        destination);
+        this.#tripPoints[i],
+        this.#offerModel.getOffersByType(this.#tripPoints[i]),
+        this.#destinationModel.getSelectedDestination(this.#tripPoints[i]));
     }
   }
 
