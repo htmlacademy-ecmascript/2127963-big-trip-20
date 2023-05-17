@@ -64,4 +64,8 @@ const getLastWord = (expression) => {
 
 };
 
-export { getRandomInteger, getRandomArrayElement, getLastWord, humanizeDate, humanizeFullDate, humanizeTime, getDuration };
+function updateItem(items, update) {
+  return items.map((item) => item.id === update.id ? update : item);
+}
+
+export { getRandomInteger, getRandomArrayElement, getLastWord, humanizeDate, humanizeFullDate, humanizeTime, getDuration, updateItem };

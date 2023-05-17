@@ -1,5 +1,6 @@
 import { getRandomInteger, getRandomArrayElement } from '../utils';
 import { POINT_TYPES } from '../const.js';
+import {nanoid} from 'nanoid';
 
 const PRICE_MIN = 200;
 const PRICE_MAX = 1000;
@@ -72,26 +73,6 @@ const createMockOffers = () => {
 
   return mockOffers;
 };
-/*const createMockOffers = () => {
-  const mockOffers = [];
-  OFFERS.forEach((offer, i) => {
-    const mockOffer = {
-      type: getRandomArrayElement(POINT_TYPES),
-      offers: [
-        {
-          id: `${i + 1}`,
-          title: offer,
-          price: getRandomInteger(PRICE_MIN, PRICE_MAX)
-        }
-      ]
-    };
-    mockOffers.push(mockOffer);
-  });
-
-  return mockOffers;
-};*/
-
-//const getRandomMockOffer = () => getRandomArrayElement(createMockOffers());
 
 const createMockDestinations = () => {
   const mockDestinations = [];
@@ -113,8 +94,6 @@ const createMockDestinations = () => {
 
 };
 
-//const getRandomMockDestination = () => getRandomArrayElement(createMockDestinations());
-
 const createMockOfferIds = () => {
   const mockOfferIds = [];
   const offerIdsNumber = getRandomInteger(OFFERS_BY_TYPE_MIN, OFFERS_BY_TYPE_MAX);
@@ -132,10 +111,10 @@ const createMockPoints = () => {
   const mockPoints = [];
   for (let i = 0; i < MOCK_POINTS_NUMBER; i++) {
     const mockPoint = {
+      id: nanoid(),
       basePrice: getRandomInteger(PRICE_MIN, PRICE_MAX),
       dateFrom: '2019-07-10T22:55:56',
       dateTo: '2019-07-11T11:22:13',
-      //destination: getRandomArrayElement(DESTINATIONS),
       destination: `${i + 1}`,
       isFavorite: getRandomArrayElement([true, false]),
       offers: createMockOfferIds(),
