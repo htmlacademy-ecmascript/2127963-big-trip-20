@@ -1,5 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { getLastWord, humanizeFullDate } from '../utils.js';
+import { humanizeFullDate } from '../utils/point.js';
+import { getLastWord } from '../utils/utils.js';
 
 const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => {
   const {type, dateFrom, dateTo, basePrice} = tripPoint;

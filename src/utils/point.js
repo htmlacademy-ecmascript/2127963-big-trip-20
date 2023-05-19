@@ -29,8 +29,10 @@ const humanizeDate = (date) => date ? dayjs(date).format(DateFormat.MD) : '';
 const humanizeFullDate = (date) => date ? dayjs(date).format(DateFormat.DDMMYYHHMM) : '';
 const humanizeTime = (date) => date ? dayjs(date).format(TIME_FORMAT) : '';
 
+const getTimeDifference = (dateFrom, dateTo) => dayjs(dateTo).diff(dayjs(dateFrom));
+
 const getDuration = (dateFrom, dateTo) => {
-  const timeDifference = dayjs(dateTo).diff(dayjs(dateFrom));
+  const timeDifference = getTimeDifference(dateFrom,dateTo);
   let pointDuration = 0;
 
   switch (true) {
@@ -48,24 +50,12 @@ const getDuration = (dateFrom, dateTo) => {
   return pointDuration;
 };
 
-const getRandomInteger = (a, b) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-  const result = Math.random() * (upper - lower + 1) + lower;
-  return Math.floor(result);
+const comparePrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
+
+const compareDuration = (pointA, pointB) => {
+  const durationA = getTimeDifference(pointA.dateFrom, pointA.dateTo);
+  const durationB = getTimeDifference(pointB.dateFrom, pointB.dateTo);
+  return durationB - durationA;
 };
 
-const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
-
-const getLastWord = (expression) => {
-  const words = expression.trim().split(' ');
-  const word = words[words.length - 1];
-  return word;
-
-};
-
-function updateItem(items, update) {
-  return items.map((item) => item.id === update.id ? update : item);
-}
-
-export { getRandomInteger, getRandomArrayElement, getLastWord, humanizeDate, humanizeFullDate, humanizeTime, getDuration, updateItem };
+export { comparePrice, compareDuration, humanizeDate, humanizeFullDate, humanizeTime, getDuration, getTimeDifference };

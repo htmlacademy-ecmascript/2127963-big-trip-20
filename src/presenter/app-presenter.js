@@ -2,7 +2,9 @@ import SortingView from '../view/sorting-view.js';
 import EventsListView from '../view/events-list-view.js';
 import { render } from '../framework/render.js';
 import PointPresenter from './point-presenter.js';
-import { updateItem } from '../utils.js';
+import { updateItem } from '../utils/utils.js';
+import { comparePrice, compareDuration } from '../utils/point.js';
+import { SortType } from '../const.js';
 
 export default class AppPresenter {
   #eventContainer = null;
@@ -11,10 +13,12 @@ export default class AppPresenter {
   #destinationModel = null;
 
   #eventListComponent = new EventsListView();
-  #sortComponent = new SortingView();
+  #sortComponent = null;
 
   #tripPoints = [];
   #pointPresenters = new Map();
+  #currentSortType = SortType.DAY;
+  #sourcedTripPoints = [];
 
   constructor({eventContainer, pointModel, offerModel, destinationModel}) {
     this.#eventContainer = eventContainer;
@@ -25,6 +29,8 @@ export default class AppPresenter {
 
   init() {
     this.#tripPoints = [...this.#pointModel.points];
+    this.#sourcedTripPoints = [...this.#pointModel.points];
+
     this.#renderBoard();
   }
 
@@ -34,6 +40,7 @@ export default class AppPresenter {
       onDataChange: this.#handlePointChange,
       onModeChange: this.#handleModeChange
     });
+
     pointPresenter.init(tripPoint, tripOffers, tripDestination);
     this.#pointPresenters.set(tripPoint.id, pointPresenter);
   }
@@ -44,12 +51,41 @@ export default class AppPresenter {
 
   #handlePointChange = (updatedPoint) => {
     this.#tripPoints = updateItem(this.#tripPoints, updatedPoint);
+    this.#sourcedTripPoints = updateItem(this.#sourcedTripPoints, updatedPoint);
     const offersForUpdatedPoint = this.#offerModel.getOffersByType(updatedPoint);
     const destinationForUpdatedPoint = this.#destinationModel.getSelectedDestination(updatedPoint);
     this.#pointPresenters.get(updatedPoint.id).init(updatedPoint, offersForUpdatedPoint, destinationForUpdatedPoint);
   };
 
+  #sortPoints(sortType) {
+    switch (sortType) {
+      case SortType.PRICE:
+        this.#tripPoints.sort(comparePrice);
+        break;
+      case SortType.TIME:
+        this.#tripPoints.sort(compareDuration);
+        break;
+      default:
+        this.#tripPoints = [...this.#sourcedTripPoints];
+    }
+
+    this.#currentSortType = sortType;
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#sortPoints(sortType);
+    this.#clearEventList();
+    this.#renderEventList();
+  };
+
   #renderSort() {
+    this.#sortComponent = new SortingView({
+      onSortTypeChange: this.#handleSortTypeChange
+    });
+
     render(this.#sortComponent, this.#eventContainer);
   }
 
@@ -60,11 +96,14 @@ export default class AppPresenter {
 
   #renderEvents() {
     for (let i = 0; i < this.#tripPoints.length; i++) {
+      const point = this.#tripPoints[i];
+      const offers = this.#offerModel.getOffersByType(this.#tripPoints[i]);
+      const destination = this.#destinationModel.getSelectedDestination(this.#tripPoints[i]);
 
       this.#renderTripPoint(
-        this.#tripPoints[i],
-        this.#offerModel.getOffersByType(this.#tripPoints[i]),
-        this.#destinationModel.getSelectedDestination(this.#tripPoints[i]));
+        point,
+        offers,
+        destination);
     }
   }
 
@@ -78,4 +117,3 @@ export default class AppPresenter {
     this.#renderEventList();
   }
 }
-

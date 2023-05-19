@@ -1,4 +1,4 @@
-import { getRandomInteger, getRandomArrayElement } from '../utils';
+import { getRandomInteger, getRandomArrayElement } from '../utils/utils.js';
 import { POINT_TYPES } from '../const.js';
 import {nanoid} from 'nanoid';
 
@@ -36,6 +36,38 @@ const DESCRIPTIONS = [
   'is one the most picturesque places in the world',
   'is one of the natural wonders of the world',
   'is a lovely place',
+];
+
+const DATES = [
+  {
+    dateFrom: '2019-07-10T22:35:56',
+    dateTo: '2019-07-11T11:22:12',
+  },
+  {
+    dateFrom: '2019-08-08T22:45:56',
+    dateTo: '2019-08-11T11:27:13',
+  },
+  {
+    dateFrom: '2019-07-29T11:55:56',
+    dateTo: '2019-07-29T13:02:13',
+  },
+  {
+    dateFrom: '2019-07-05T20:55:52',
+    dateTo: '2019-07-11T11:22:13',
+  },
+  {
+    dateFrom: '2019-03-12T10:25:57',
+    dateTo: '2019-03-14T11:22:13',
+  },
+  {
+    dateFrom: '2019-07-10T10:25:57',
+    dateTo: '2019-07-13T11:22:13',
+  },
+  {
+    dateFrom: '2019-07-11T10:25:57',
+    dateTo: '2019-07-12T11:22:13',
+  },
+
 ];
 
 const generatedMockOffers = [];
@@ -113,8 +145,8 @@ const createMockPoints = () => {
     const mockPoint = {
       id: nanoid(),
       basePrice: getRandomInteger(PRICE_MIN, PRICE_MAX),
-      dateFrom: '2019-07-10T22:55:56',
-      dateTo: '2019-07-11T11:22:13',
+      dateFrom: DATES[i].dateFrom,
+      dateTo: DATES[i].dateTo,
       destination: `${i + 1}`,
       isFavorite: getRandomArrayElement([true, false]),
       offers: createMockOfferIds(),
