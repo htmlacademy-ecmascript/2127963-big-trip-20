@@ -1,4 +1,54 @@
-import { getTimeDifference } from '../utils';
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
+
+const TimeFormat = {
+  DAYS: 'DD[D] HH[H] mm[M]',
+  HOURS: 'HH[H] mm[M]',
+  MINUTES: 'mm[M]'
+};
+
+const DateFormat = {
+  MD: 'MMM D',
+  DDMMYYHHMM: 'DD/MM/YY HH:mm'
+};
+
+const TIME_FORMAT = 'HH:mm';
+const MSEC_IN_SEC = 1000;
+const SEC_IN_MIN = 60;
+const MIN_IN_HOUR = 60;
+const HOURS_IN_DAY = 24;
+
+const MSEC_IN_HOUR = MSEC_IN_SEC * SEC_IN_MIN * MIN_IN_HOUR;
+const MSEC_IN_DAY = HOURS_IN_DAY * MSEC_IN_HOUR;
+
+const humanizeDate = (date) => date ? dayjs(date).format(DateFormat.MD) : '';
+const humanizeFullDate = (date) => date ? dayjs(date).format(DateFormat.DDMMYYHHMM) : '';
+const humanizeTime = (date) => date ? dayjs(date).format(TIME_FORMAT) : '';
+
+const getTimeDifference = (dateFrom, dateTo) => dayjs(dateTo).diff(dayjs(dateFrom));
+
+const getDuration = (dateFrom, dateTo) => {
+  const timeDifference = getTimeDifference(dateFrom,dateTo);
+  let pointDuration = 0;
+
+  switch (true) {
+    case (timeDifference >= MSEC_IN_DAY):
+      pointDuration = dayjs.duration(timeDifference).format(TimeFormat.DAYS);
+      break;
+    case (timeDifference >= MSEC_IN_HOUR):
+      pointDuration = dayjs.duration(timeDifference).format(TimeFormat.HOURS);
+      break;
+    case (timeDifference < MSEC_IN_HOUR):
+      pointDuration = dayjs.duration(timeDifference).format(TimeFormat.MINUTES);
+      break;
+  }
+
+  return pointDuration;
+};
 
 const comparePrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
 
@@ -8,4 +58,4 @@ const compareDuration = (pointA, pointB) => {
   return durationB - durationA;
 };
 
-export { comparePrice, compareDuration };
+export { comparePrice, compareDuration, humanizeDate, humanizeFullDate, humanizeTime, getDuration, getTimeDifference };
