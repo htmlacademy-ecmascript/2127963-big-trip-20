@@ -16,4 +16,11 @@ const SortType = {
   TIME: 'sort-time',
 };
 
-export { POINT_TYPES, SortType };
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
+};
+
+export { POINT_TYPES, SortType, FilterType };
