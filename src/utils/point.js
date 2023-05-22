@@ -50,9 +50,9 @@ const getDuration = (dateFrom, dateTo) => {
   return pointDuration;
 };
 
-const isDateAfter = (date) => dayjs().isAfter(date, 'D');
+const isDateInPast = (date) => dayjs().isAfter(date, 'D');
 
-const isDateBefore = (date) => dayjs().isBefore(date, 'D');
+const isDateInFUture = (date) => dayjs().isBefore(date, 'D');
 
 const isSameDate = (date) => dayjs(date).isSame(dayjs(), 'D');
 
@@ -68,4 +68,4 @@ const compareDuration = (pointA, pointB) => {
 const comparePrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
 
 
-export { comparePrice, compareDuration, humanizeDate, humanizeFullDate, humanizeTime, getDuration, getTimeDifference, isDateAfter, isDateBefore, isSameDate, compareDates };
+export { comparePrice, compareDuration, humanizeDate, humanizeFullDate, humanizeTime, getDuration, getTimeDifference, isDateInPast, isDateInFUture, isSameDate, compareDates };
