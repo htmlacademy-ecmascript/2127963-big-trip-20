@@ -5,6 +5,7 @@ import PointPresenter from './point-presenter.js';
 import { updateItem } from '../utils/utils.js';
 import { comparePrice, compareDuration } from '../utils/point.js';
 import { SortType } from '../const.js';
+import NoPointsView from '../view/no-points-view.js';
 
 export default class AppPresenter {
   #eventContainer = null;
@@ -91,6 +92,11 @@ export default class AppPresenter {
 
   #renderEventList() {
     render(this.#eventListComponent, this.#eventContainer);
+
+    if (!this.#tripPoints.length) {
+      render(new NoPointsView(), this.#eventListComponent.element);
+      return;
+    }
     this.#renderEvents();
   }
 
