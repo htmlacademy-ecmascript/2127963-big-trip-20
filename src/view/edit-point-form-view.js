@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFullDate } from '../utils/point.js';
 import { getLastWord } from '../utils/utils.js';
 
@@ -13,7 +13,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
       const {id, title, price} = tripOffer;
       const renderedOffer = `
        <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getLastWord(title)}-${id}" type="checkbox" name="event-offer-${getLastWord(title)}" checked>
+          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getLastWord(title)}-${id}" type="checkbox" name="event-offer-${getLastWord(title)}" ${tripPoint.offers.includes(id) ? 'checked' : ''}>
           <label class="event__offer-label" for="event-offer-${getLastWord(title)}-${id}">
             <span class="event__offer-title">${title}</span>
             &plus;&euro;&nbsp;
@@ -173,8 +173,8 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
   );
 };
 
-export default class EditPointFormView extends AbstractView {
-  #tripPoint = null;
+export default class EditPointFormView extends AbstractStatefulView {
+  //#tripPoint = null;
   #tripOffers = null;
   #tripDestination = null;
   #handleFormSubmit = null;
@@ -182,7 +182,8 @@ export default class EditPointFormView extends AbstractView {
 
   constructor({tripPoint, tripOffers, tripDestination, onFormSubmit, onEditClick}) {
     super();
-    this.#tripPoint = tripPoint;
+    //this.#tripPoint = tripPoint;
+    this._setState(EditPointFormView.parsePointToState(tripPoint));
     this.#tripOffers = tripOffers;
     this.#tripDestination = tripDestination;
     this.#handleFormSubmit = onFormSubmit;
@@ -196,13 +197,22 @@ export default class EditPointFormView extends AbstractView {
   }
 
   get template() {
-    return createEditPointFormTemplate(this.#tripPoint, this.#tripOffers, this.#tripDestination);
+    return createEditPointFormTemplate(this._state, this.#tripOffers, this.#tripDestination);
+    //return createEditPointFormTemplate(this.#tripPoint, this.#tripOffers, this.#tripDestination);
   }
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(this.#tripPoint);
+    this.#handleFormSubmit(EditPointFormView.parseStateToPoint(this._state));
   };
+
+  static parsePointToState(tripPoint) {
+    return {...tripPoint};
+  }
+
+  static parseStateToPoint(state) {
+    return {...state};
+  }
 
   #editClickHandler = (evt) => {
     evt.preventDefault();

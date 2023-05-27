@@ -65,7 +65,7 @@ const DATES = [
   },
   {
     dateFrom: '2023-07-11T10:25:57',
-    dateTo: '2023-07-12T11:22:13',
+    dateTo: '2019-07-12T11:22:13',
   },
 
 ];
@@ -126,7 +126,7 @@ const createMockDestinations = () => {
 
 };
 
-const createMockOfferIds = () => {
+/*const createMockOfferIds = () => {
   const mockOfferIds = [];
   const offerIdsNumber = getRandomInteger(OFFERS_BY_TYPE_MIN, OFFERS_BY_TYPE_MAX);
 
@@ -137,7 +137,7 @@ const createMockOfferIds = () => {
     }
   }
   return mockOfferIds;
-};
+};*/
 
 const createMockPoints = () => {
   const mockPoints = [];
@@ -149,7 +149,8 @@ const createMockPoints = () => {
       dateTo: DATES[i].dateTo,
       destination: `${i + 1}`,
       isFavorite: getRandomArrayElement([true, false]),
-      offers: createMockOfferIds(),
+      //offers: createMockOfferIds(),
+      offers: ['1', '2', '3'],
       type: getRandomArrayElement(POINT_TYPES)
     };
     mockPoints.push(mockPoint);

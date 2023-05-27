@@ -6,11 +6,14 @@ const createEventTemplate = (tripPoint, tripOffers, tripDestination) => {
   const {type, dateFrom, dateTo, basePrice, isFavorite} = tripPoint;
   const {name} = tripDestination;
 
+  const checkedOffers = tripOffers.filter((offer) => tripPoint.offers.includes(offer.id));
+
   const renderSelectedOffers = () => {
     let selectedOffers = '';
 
-    tripOffers.forEach((tripOffer) => {
-      const {title, price} = tripOffer;
+
+    checkedOffers.forEach((checkedOffer) => {
+      const {title, price} = checkedOffer;
       const selectedOffer = `
         <li class="event__offer">
           <span class="event__offer-title">${title}</span>
