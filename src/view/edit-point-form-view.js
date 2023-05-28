@@ -27,7 +27,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
     return renderedDestinations;
   };
 
-  const getOffersByType = (point, offers) => { // в случае, если в tripOffers передаются ВСЕ offers из модели, доступные для всех типов
+  const getOffersByType = (point, offers) => {
     const offersByType = offers.find((offer) => offer.type === point.type);
     return offersByType.offers;
   };
@@ -37,11 +37,9 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
   const renderAvailableOffers = () => {
     let renderedOffers = '';
 
-    availableOffers.forEach((availableOffer) => { // в случае, если в  передаются ВСЕ offers из модели, доступные для всех типов
+    availableOffers.forEach((availableOffer) => {
       const {id, title, price} = availableOffer;
 
-      //tripOffers.forEach((tripOffer) => { //если в tripOffers передаются предложения,  доступные только для данного типа
-      //const {id, title, price} = tripOffer;
       const renderedOffer = `
        <div class="event__offer-selector">
           <input class="event__offer-checkbox  visually-hidden" data-offer-id="${id}" id="event-offer-${getLastWord(title)}-${id}" type="checkbox" name="event-offer-${getLastWord(title)}" ${tripPoint.offers.includes(id) ? 'checked' : ''}>
@@ -205,7 +203,6 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
 };
 
 export default class EditPointFormView extends AbstractStatefulView {
-  //#tripPoint = null;
   #tripOffers = null;
   #tripDestinations = null;
   #handleFormSubmit = null;
@@ -215,8 +212,7 @@ export default class EditPointFormView extends AbstractStatefulView {
     super();
 
     this._setState(EditPointFormView.parsePointToState(tripPoint));
-    this.#tripOffers = tripOffers; // в случае, если в  передаются ВСЕ offers из модели, доступные для всех типов
-    //this.#tripOffers = tripOffers.getOffersByType(this._state); // если передается модель
+    this.#tripOffers = tripOffers;
     this.#tripDestinations = tripDestinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleEditClick = onEditClick;
@@ -225,8 +221,13 @@ export default class EditPointFormView extends AbstractStatefulView {
   }
 
   get template() {
-    //return createEditPointFormTemplate(this._state, this.#tripOffers.getOffersByType(this._state), this.#tripDestination); //если передается модель - еще 1 вариант
     return createEditPointFormTemplate(this._state, this.#tripOffers, this.#tripDestinations);
+  }
+
+  reset(point) {
+    this.updateElement(
+      EditPointFormView.parsePointToState(point),
+    );
   }
 
   _restoreHandlers() {
@@ -267,8 +268,6 @@ export default class EditPointFormView extends AbstractStatefulView {
       ...this.state,
       offers: updatedOffers.map((element) => element.dataset.offerId)
     });
-
-
   };
 
   #destinationChangeHandler = (evt) => {

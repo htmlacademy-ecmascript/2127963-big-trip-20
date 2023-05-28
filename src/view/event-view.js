@@ -7,8 +7,6 @@ const createEventTemplate = (tripPoint, tripOffers, tripDestinations) => {
   const destinationById = tripDestinations.find((tripDestination) => tripDestination.id === tripPoint.destination);
 
   const {name} = destinationById;
-  //const {name} = tripDestination;
-
 
   const getOffersByType = (point, offers) => {
     const offersByType = offers.find((offer) => offer.type === point.type);
@@ -17,8 +15,6 @@ const createEventTemplate = (tripPoint, tripOffers, tripDestinations) => {
 
   const availableOffers = getOffersByType(tripPoint, tripOffers);
   const checkedOffers = availableOffers.filter((offer) => tripPoint.offers.includes(offer.id));
-
-  //const checkedOffers = tripOffers.filter((offer) => tripPoint.offers.includes(offer.id));
 
   const renderSelectedOffers = () => {
     let selectedOffers = '';

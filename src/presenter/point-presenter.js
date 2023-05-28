@@ -16,24 +16,21 @@ export default class PointPresenter {
 
   #tripPoint = null;
   #tripOffers = null;
-  //#tripOfferModel = null; // если во вью передается модель для перерисовки по типу
   #tripDestinations = null;
   #mode = Mode.DEFAULT;
 
 
-  constructor({eventListContainer, tripOffers, /*tripOfferModel,*/ tripDestinations, onDataChange, onModeChange}) {
+  constructor({eventListContainer, tripOffers, tripDestinations, onDataChange, onModeChange}) {
     this.#eventListContainer = eventListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
     this.#tripOffers = tripOffers;
-    //this.#tripOfferModel = tripOfferModel; // если во вью передается модель для перерисовки по типу
     this.#tripDestinations = tripDestinations;
   }
 
-  init(tripPoint/*, tripOffers, tripDestination*/) {
+  init(tripPoint) {
     this.#tripPoint = tripPoint;
-    //this.#tripOffers = tripOffers;
-    //this.#tripDestination = tripDestination;
+
 
     const previousEventComponent = this.#eventComponent;
     const previousEventEditComponent = this.#eventEditComponent;
@@ -52,7 +49,6 @@ export default class PointPresenter {
     this.#eventEditComponent = new EditPointFormView({
       tripPoint: this.#tripPoint,
       tripOffers: this.#tripOffers,
-      //tripOffers: this.#tripOfferModel, // если во вью передается модель для перерисовки по типу
       tripDestinations: this.#tripDestinations,
       onFormSubmit: this.#handleFormSubmit,
       onEditClick: () => {
@@ -79,6 +75,7 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#eventEditComponent.reset(this.#tripPoint);
       this.#replaceFormByPoint();
     }
   }
@@ -100,6 +97,7 @@ export default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+      this.#eventEditComponent.reset(this.#tripPoint);
       this.#replaceFormByPoint();
     }
   };
