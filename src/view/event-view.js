@@ -1,10 +1,13 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDate, humanizeTime, getDuration } from '../utils/point.js';
 
-const createEventTemplate = (tripPoint, tripOffers, tripDestination) => {
+const createEventTemplate = (tripPoint, tripOffers, tripDestinations) => {
 
   const {type, dateFrom, dateTo, basePrice, isFavorite} = tripPoint;
-  const {name} = tripDestination;
+  const destinationById = tripDestinations.find((tripDestination) => tripDestination.id === tripPoint.destination);
+
+  const {name} = destinationById;
+  //const {name} = tripDestination;
 
 
   const getOffersByType = (point, offers) => {
@@ -77,15 +80,15 @@ const createEventTemplate = (tripPoint, tripOffers, tripDestination) => {
 export default class EventView extends AbstractView {
   #tripPoint = null;
   #tripOffers = null;
-  #tripDestination = null;
+  #tripDestinations = null;
   #handleEditClick = null;
   #handleFavoriteClick = null;
 
-  constructor({tripPoint, tripOffers, tripDestination, onEditClick, onFavoriteClick}) {
+  constructor({tripPoint, tripOffers, tripDestinations, onEditClick, onFavoriteClick}) {
     super();
     this.#tripPoint = tripPoint;
     this.#tripOffers = tripOffers;
-    this.#tripDestination = tripDestination;
+    this.#tripDestinations = tripDestinations;
     this.#handleEditClick = onEditClick;
     this.#handleFavoriteClick = onFavoriteClick;
 
@@ -98,7 +101,7 @@ export default class EventView extends AbstractView {
   }
 
   get template() {
-    return createEventTemplate(this.#tripPoint, this.#tripOffers, this.#tripDestination);
+    return createEventTemplate(this.#tripPoint, this.#tripOffers, this.#tripDestinations);
   }
 
   #editClickHandler = (evt) => {

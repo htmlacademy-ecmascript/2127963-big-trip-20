@@ -2,9 +2,30 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFullDate } from '../utils/point.js';
 import { getLastWord } from '../utils/utils.js';
 
-const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => {
+const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => {
   const {type, dateFrom, dateTo, basePrice} = tripPoint;
-  const {description, pictures} = tripDestination;
+
+  const destinationById = tripDestinations.find((tripDestination) => tripDestination.id === tripPoint.destination);
+
+  const {name, description, pictures} = destinationById;
+
+  const renderSelectedDestination = () => (
+    `<input class="event__input  event__input--destination"
+      id="event-destination-1"
+      type="text"
+      name="event-destination"
+      value="${name}"
+      list="destination-list-1">`
+  );
+
+  const renderDestionationList = () => {
+    let renderedDestinations = '';
+    tripDestinations.forEach((tripDestination) => {
+      const renderedDestination = `<option value="${tripDestination.name}"></option>`;
+      renderedDestinations += renderedDestination;
+    });
+    return renderedDestinations;
+  };
 
   const getOffersByType = (point, offers) => { // в случае, если в tripOffers передаются ВСЕ offers из модели, доступные для всех типов
     const offersByType = offers.find((offer) => offer.type === point.type);
@@ -23,7 +44,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
       //const {id, title, price} = tripOffer;
       const renderedOffer = `
        <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getLastWord(title)}-${id}" type="checkbox" name="event-offer-${getLastWord(title)}" ${tripPoint.offers.includes(id) ? 'checked' : ''}>
+          <input class="event__offer-checkbox  visually-hidden" data-offer-id="${id}" id="event-offer-${getLastWord(title)}-${id}" type="checkbox" name="event-offer-${getLastWord(title)}" ${tripPoint.offers.includes(id) ? 'checked' : ''}>
           <label class="event__offer-label" for="event-offer-${getLastWord(title)}-${id}">
             <span class="event__offer-title">${title}</span>
             &plus;&euro;&nbsp;
@@ -36,7 +57,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
     return renderedOffers;
   };
 
-  const renderAvailableOffersContainer = () => (tripOffers.length)
+  const renderAvailableOffersContainer = () => (availableOffers.length)
     ? `<section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
@@ -70,11 +91,9 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
   };
 
   const renderDestionationDescriptionContainer = () => (description)
-    ? `<section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${description}</p>
-          ${renderPicturesContainer()}
-        </section>`
+    ? `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
+        <p class="event__destination-description">${description}</p>
+        ${renderPicturesContainer()}`
     : '';
 
   return (
@@ -144,12 +163,12 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${tripDestination.name}" list="destination-list-1">
+
+          ${renderSelectedDestination()}
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+            ${renderDestionationList()}
           </datalist>
+
         </div>
 
         <div class="event__field-group  event__field-group--time">
@@ -175,7 +194,9 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
         </button>
       </header>
       <section class="event__details">
-        ${renderAvailableOffersContainer()}
+        <section class="event__section  event__section--offers">
+          ${renderAvailableOffersContainer()}
+        </section>
         ${renderDestionationDescriptionContainer()}
       </section>
     </form>
@@ -186,17 +207,17 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
 export default class EditPointFormView extends AbstractStatefulView {
   //#tripPoint = null;
   #tripOffers = null;
-  #tripDestination = null;
+  #tripDestinations = null;
   #handleFormSubmit = null;
   #handleEditClick = null;
 
-  constructor({tripPoint, tripOffers, tripDestination, onFormSubmit, onEditClick}) {
+  constructor({tripPoint, tripOffers, tripDestinations, onFormSubmit, onEditClick}) {
     super();
 
     this._setState(EditPointFormView.parsePointToState(tripPoint));
     this.#tripOffers = tripOffers; // в случае, если в  передаются ВСЕ offers из модели, доступные для всех типов
     //this.#tripOffers = tripOffers.getOffersByType(this._state); // если передается модель
-    this.#tripDestination = tripDestination;
+    this.#tripDestinations = tripDestinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleEditClick = onEditClick;
 
@@ -205,7 +226,7 @@ export default class EditPointFormView extends AbstractStatefulView {
 
   get template() {
     //return createEditPointFormTemplate(this._state, this.#tripOffers.getOffersByType(this._state), this.#tripDestination); //если передается модель - еще 1 вариант
-    return createEditPointFormTemplate(this._state, this.#tripOffers, this.#tripDestination);
+    return createEditPointFormTemplate(this._state, this.#tripOffers, this.#tripDestinations);
   }
 
   _restoreHandlers() {
@@ -217,6 +238,13 @@ export default class EditPointFormView extends AbstractStatefulView {
 
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#eventTypeChangeHandler);
+
+    this.element.querySelector('.event__section--offers')
+      .addEventListener('change', this.#eventCheckHandler);
+
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#destinationChangeHandler);
+
   }
 
   #eventTypeChangeHandler = (evt) => {
@@ -227,10 +255,35 @@ export default class EditPointFormView extends AbstractStatefulView {
       ...this._state,
       type: evt.target.value,
       offers: []
-
-
     });
   };
+
+  #eventCheckHandler = (evt) => {
+    evt.preventDefault();
+
+    const updatedOffers = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
+
+    this._setState({
+      ...this.state,
+      offers: updatedOffers.map((element) => element.dataset.offerId)
+    });
+
+
+  };
+
+  #destinationChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    const updatedDestination = this.#tripDestinations.find((tripDestination) => tripDestination.name === evt.target.value);
+
+    const updatedDestinationId = (updatedDestination) ? updatedDestination.id : null;
+
+    this.updateElement({
+      ...this._state,
+      destination: updatedDestinationId
+    });
+  };
+
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();

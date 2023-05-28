@@ -17,17 +17,17 @@ export default class PointPresenter {
   #tripPoint = null;
   #tripOffers = null;
   //#tripOfferModel = null; // если во вью передается модель для перерисовки по типу
-  #tripDestination = null;
+  #tripDestinations = null;
   #mode = Mode.DEFAULT;
 
 
-  constructor({eventListContainer, tripOffers, /*tripOfferModel,*/ tripDestination, onDataChange, onModeChange}) {
+  constructor({eventListContainer, tripOffers, /*tripOfferModel,*/ tripDestinations, onDataChange, onModeChange}) {
     this.#eventListContainer = eventListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
     this.#tripOffers = tripOffers;
     //this.#tripOfferModel = tripOfferModel; // если во вью передается модель для перерисовки по типу
-    this.#tripDestination = tripDestination;
+    this.#tripDestinations = tripDestinations;
   }
 
   init(tripPoint/*, tripOffers, tripDestination*/) {
@@ -42,7 +42,7 @@ export default class PointPresenter {
     this.#eventComponent = new EventView({
       tripPoint: this.#tripPoint,
       tripOffers: this.#tripOffers,
-      tripDestination: this.#tripDestination,
+      tripDestinations: this.#tripDestinations,
       onEditClick: () => {
         this.#replacePointByForm();
       },
@@ -53,7 +53,7 @@ export default class PointPresenter {
       tripPoint: this.#tripPoint,
       tripOffers: this.#tripOffers,
       //tripOffers: this.#tripOfferModel, // если во вью передается модель для перерисовки по типу
-      tripDestination: this.#tripDestination,
+      tripDestinations: this.#tripDestinations,
       onFormSubmit: this.#handleFormSubmit,
       onEditClick: () => {
         this.#replaceFormByPoint();

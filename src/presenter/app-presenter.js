@@ -48,7 +48,8 @@ export default class AppPresenter {
       //tripOffers: this.#getOffersByType(tripPoint, this.#offerModel.offers), // предложения по типу отбираются в модели
       //tripOffers: this.#offerModel.getOffersByType(tripPoint),
       //tripOfferModel: this.#offerModel, // модель передается во вью
-      tripDestination: this.#destinationModel.getSelectedDestination(tripPoint),
+      //tripDestination: this.#destinationModel.getSelectedDestination(tripPoint),
+      tripDestinations: this.#destinationModel.destinations,
 
       onDataChange: this.#handlePointChange,
       onModeChange: this.#handleModeChange
