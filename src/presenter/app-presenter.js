@@ -35,14 +35,26 @@ export default class AppPresenter {
     this.#renderBoard();
   }
 
-  #renderTripPoint(tripPoint, tripOffers, tripDestination) {
+  #getOffersByType(tripPoint, offers) {
+    const offersByType = offers.find((offer) => offer.type === tripPoint.type);
+    return offersByType.offers;
+  }
+
+  #renderTripPoint(tripPoint/*, tripOffers, tripDestination*/) {
     const pointPresenter = new PointPresenter({
       eventListContainer: this.#eventListComponent.element,
+
+      tripOffers: this.#offerModel.offers, // из модели получаем все предложения для всех типов
+      //tripOffers: this.#getOffersByType(tripPoint, this.#offerModel.offers), // предложения по типу отбираются в модели
+      //tripOffers: this.#offerModel.getOffersByType(tripPoint),
+      //tripOfferModel: this.#offerModel, // модель передается во вью
+      tripDestination: this.#destinationModel.getSelectedDestination(tripPoint),
+
       onDataChange: this.#handlePointChange,
       onModeChange: this.#handleModeChange
     });
 
-    pointPresenter.init(tripPoint, tripOffers, tripDestination);
+    pointPresenter.init(tripPoint/*, tripOffers, tripDestination*/); // если инициализация на основе tripPoint, tripOffers, tripDestination
     this.#pointPresenters.set(tripPoint.id, pointPresenter);
   }
 
@@ -53,9 +65,9 @@ export default class AppPresenter {
   #handlePointChange = (updatedPoint) => {
     this.#tripPoints = updateItem(this.#tripPoints, updatedPoint);
     this.#sourcedTripPoints = updateItem(this.#sourcedTripPoints, updatedPoint);
-    const offersForUpdatedPoint = this.#offerModel.getOffersByType(updatedPoint);
-    const destinationForUpdatedPoint = this.#destinationModel.getSelectedDestination(updatedPoint);
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint, offersForUpdatedPoint, destinationForUpdatedPoint);
+    //const offersForUpdatedPoint = this.#offerModel.getOffersByType(updatedPoint); // если инициализация на основе tripPoint, tripOffers, tripDestination
+    //const destinationForUpdatedPoint = this.#destinationModel.getSelectedDestination(updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint/*, offersForUpdatedPoint, destinationForUpdatedPoint*/);
   };
 
   #sortPoints(sortType) {
@@ -103,13 +115,13 @@ export default class AppPresenter {
   #renderEvents() {
     for (let i = 0; i < this.#tripPoints.length; i++) {
       const point = this.#tripPoints[i];
-      const offers = this.#offerModel.getOffersByType(this.#tripPoints[i]);
-      const destination = this.#destinationModel.getSelectedDestination(this.#tripPoints[i]);
+      //const offers = this.#offerModel.getOffersByType(this.#tripPoints[i]);
+      //const destination = this.#destinationModel.getSelectedDestination(this.#tripPoints[i]);
 
       this.#renderTripPoint(
         point,
-        offers,
-        destination);
+        /*offers,
+        destination*/);
     }
   }
 

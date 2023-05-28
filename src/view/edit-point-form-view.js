@@ -6,11 +6,21 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestination) => 
   const {type, dateFrom, dateTo, basePrice} = tripPoint;
   const {description, pictures} = tripDestination;
 
+  const getOffersByType = (point, offers) => { // в случае, если в tripOffers передаются ВСЕ offers из модели, доступные для всех типов
+    const offersByType = offers.find((offer) => offer.type === point.type);
+    return offersByType.offers;
+  };
+
+  const availableOffers = getOffersByType(tripPoint, tripOffers);
+
   const renderAvailableOffers = () => {
     let renderedOffers = '';
 
-    tripOffers.forEach((tripOffer) => {
-      const {id, title, price} = tripOffer;
+    availableOffers.forEach((availableOffer) => { // в случае, если в  передаются ВСЕ offers из модели, доступные для всех типов
+      const {id, title, price} = availableOffer;
+
+      //tripOffers.forEach((tripOffer) => { //если в tripOffers передаются предложения,  доступные только для данного типа
+      //const {id, title, price} = tripOffer;
       const renderedOffer = `
        <div class="event__offer-selector">
           <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getLastWord(title)}-${id}" type="checkbox" name="event-offer-${getLastWord(title)}" ${tripPoint.offers.includes(id) ? 'checked' : ''}>
@@ -182,24 +192,45 @@ export default class EditPointFormView extends AbstractStatefulView {
 
   constructor({tripPoint, tripOffers, tripDestination, onFormSubmit, onEditClick}) {
     super();
-    //this.#tripPoint = tripPoint;
+
     this._setState(EditPointFormView.parsePointToState(tripPoint));
-    this.#tripOffers = tripOffers;
+    this.#tripOffers = tripOffers; // в случае, если в  передаются ВСЕ offers из модели, доступные для всех типов
+    //this.#tripOffers = tripOffers.getOffersByType(this._state); // если передается модель
     this.#tripDestination = tripDestination;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleEditClick = onEditClick;
 
+    this._restoreHandlers();
+  }
+
+  get template() {
+    //return createEditPointFormTemplate(this._state, this.#tripOffers.getOffersByType(this._state), this.#tripDestination); //если передается модель - еще 1 вариант
+    return createEditPointFormTemplate(this._state, this.#tripOffers, this.#tripDestination);
+  }
+
+  _restoreHandlers() {
     this.element.querySelector('.event--edit')
       .addEventListener('submit', this.#formSubmitHandler);
 
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#editClickHandler);
+
+    this.element.querySelector('.event__type-group')
+      .addEventListener('change', this.#eventTypeChangeHandler);
   }
 
-  get template() {
-    return createEditPointFormTemplate(this._state, this.#tripOffers, this.#tripDestination);
-    //return createEditPointFormTemplate(this.#tripPoint, this.#tripOffers, this.#tripDestination);
-  }
+  #eventTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    this.updateElement({
+
+      ...this._state,
+      type: evt.target.value,
+      offers: []
+
+
+    });
+  };
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
@@ -211,7 +242,7 @@ export default class EditPointFormView extends AbstractStatefulView {
   }
 
   static parseStateToPoint(state) {
-    return {...state};
+    return state;
   }
 
   #editClickHandler = (evt) => {

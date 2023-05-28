@@ -7,12 +7,8 @@ export default class OfferModel {
     return this.#offers;
   }
 
-  getOffersByType(tripPoint) {
+  /* getOffersByType(tripPoint) { // перенесла эту функциональность во вью, иначе не получается выполнять перерисовку без передачи во вью модели
     const offersByType = this.#offers.find((offer) => offer.type === tripPoint.type);
     return offersByType.offers;
-  }
-
-  getCheckedOffers(tripPoint) {
-    return this.getOffersByType(tripPoint).filter((offer) => tripPoint.offers.includes(offer.id));
-  }
+  }*/
 }

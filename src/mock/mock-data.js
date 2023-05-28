@@ -126,19 +126,6 @@ const createMockDestinations = () => {
 
 };
 
-/*const createMockOfferIds = () => {
-  const mockOfferIds = [];
-  const offerIdsNumber = getRandomInteger(OFFERS_BY_TYPE_MIN, OFFERS_BY_TYPE_MAX);
-
-  while (mockOfferIds.length < offerIdsNumber) {
-    const mockOfferId = getRandomInteger(1, OFFERS.length);
-    if (!mockOfferIds.includes(String(mockOfferId))) {
-      mockOfferIds.push(String(mockOfferId));
-    }
-  }
-  return mockOfferIds;
-};*/
-
 const createMockPoints = () => {
   const mockPoints = [];
   for (let i = 0; i < MOCK_POINTS_NUMBER; i++) {
@@ -149,7 +136,6 @@ const createMockPoints = () => {
       dateTo: DATES[i].dateTo,
       destination: `${i + 1}`,
       isFavorite: getRandomArrayElement([true, false]),
-      //offers: createMockOfferIds(),
       offers: ['1', '2', '3'],
       type: getRandomArrayElement(POINT_TYPES)
     };

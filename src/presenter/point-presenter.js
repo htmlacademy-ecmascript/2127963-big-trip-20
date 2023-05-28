@@ -16,20 +16,24 @@ export default class PointPresenter {
 
   #tripPoint = null;
   #tripOffers = null;
+  //#tripOfferModel = null; // если во вью передается модель для перерисовки по типу
   #tripDestination = null;
   #mode = Mode.DEFAULT;
 
 
-  constructor({eventListContainer, onDataChange, onModeChange}) {
+  constructor({eventListContainer, tripOffers, /*tripOfferModel,*/ tripDestination, onDataChange, onModeChange}) {
     this.#eventListContainer = eventListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
+    this.#tripOffers = tripOffers;
+    //this.#tripOfferModel = tripOfferModel; // если во вью передается модель для перерисовки по типу
+    this.#tripDestination = tripDestination;
   }
 
-  init(tripPoint, tripOffers, tripDestination) {
+  init(tripPoint/*, tripOffers, tripDestination*/) {
     this.#tripPoint = tripPoint;
-    this.#tripOffers = tripOffers;
-    this.#tripDestination = tripDestination;
+    //this.#tripOffers = tripOffers;
+    //this.#tripDestination = tripDestination;
 
     const previousEventComponent = this.#eventComponent;
     const previousEventEditComponent = this.#eventEditComponent;
@@ -48,6 +52,7 @@ export default class PointPresenter {
     this.#eventEditComponent = new EditPointFormView({
       tripPoint: this.#tripPoint,
       tripOffers: this.#tripOffers,
+      //tripOffers: this.#tripOfferModel, // если во вью передается модель для перерисовки по типу
       tripDestination: this.#tripDestination,
       onFormSubmit: this.#handleFormSubmit,
       onEditClick: () => {
