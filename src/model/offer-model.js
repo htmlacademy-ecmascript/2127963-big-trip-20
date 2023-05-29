@@ -6,9 +6,4 @@ export default class OfferModel {
   get offers() {
     return this.#offers;
   }
-
-  getOffersByType (tripPoint) {
-    const offersByType = this.#offers.find((offer) => offer.type === tripPoint.type);
-    return offersByType.offers;
-  }
 }

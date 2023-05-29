@@ -5,6 +5,7 @@ import PointPresenter from './point-presenter.js';
 import { updateItem } from '../utils/utils.js';
 import { comparePrice, compareDuration } from '../utils/point.js';
 import { SortType } from '../const.js';
+import NoPointsView from '../view/no-points-view.js';
 
 export default class AppPresenter {
   #eventContainer = null;
@@ -34,14 +35,23 @@ export default class AppPresenter {
     this.#renderBoard();
   }
 
-  #renderTripPoint(tripPoint, tripOffers, tripDestination) {
+  #getOffersByType(tripPoint, offers) {
+    const offersByType = offers.find((offer) => offer.type === tripPoint.type);
+    return offersByType.offers;
+  }
+
+  #renderTripPoint(tripPoint) {
     const pointPresenter = new PointPresenter({
       eventListContainer: this.#eventListComponent.element,
+
+      tripOffers: this.#offerModel.offers,
+      tripDestinations: this.#destinationModel.destinations,
+
       onDataChange: this.#handlePointChange,
       onModeChange: this.#handleModeChange
     });
 
-    pointPresenter.init(tripPoint, tripOffers, tripDestination);
+    pointPresenter.init(tripPoint);
     this.#pointPresenters.set(tripPoint.id, pointPresenter);
   }
 
@@ -52,9 +62,7 @@ export default class AppPresenter {
   #handlePointChange = (updatedPoint) => {
     this.#tripPoints = updateItem(this.#tripPoints, updatedPoint);
     this.#sourcedTripPoints = updateItem(this.#sourcedTripPoints, updatedPoint);
-    const offersForUpdatedPoint = this.#offerModel.getOffersByType(updatedPoint);
-    const destinationForUpdatedPoint = this.#destinationModel.getSelectedDestination(updatedPoint);
-    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint, offersForUpdatedPoint, destinationForUpdatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
   };
 
   #sortPoints(sortType) {
@@ -91,19 +99,17 @@ export default class AppPresenter {
 
   #renderEventList() {
     render(this.#eventListComponent, this.#eventContainer);
+
+    if (!this.#tripPoints.length) {
+      render(new NoPointsView(), this.#eventListComponent.element);
+      return;
+    }
     this.#renderEvents();
   }
 
   #renderEvents() {
     for (let i = 0; i < this.#tripPoints.length; i++) {
-      const point = this.#tripPoints[i];
-      const offers = this.#offerModel.getOffersByType(this.#tripPoints[i]);
-      const destination = this.#destinationModel.getSelectedDestination(this.#tripPoints[i]);
-
-      this.#renderTripPoint(
-        point,
-        offers,
-        destination);
+      this.#renderTripPoint(this.#tripPoints[i]);
     }
   }
 

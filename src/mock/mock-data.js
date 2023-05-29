@@ -40,31 +40,31 @@ const DESCRIPTIONS = [
 
 const DATES = [
   {
-    dateFrom: '2019-07-10T22:35:56',
-    dateTo: '2019-07-11T11:22:12',
+    dateFrom: '2023-07-10T22:35:56',
+    dateTo: '2023-07-11T11:22:12',
   },
   {
-    dateFrom: '2019-08-08T22:45:56',
-    dateTo: '2019-08-11T11:27:13',
+    dateFrom: '2023-08-08T22:45:56',
+    dateTo: '2023-08-11T11:27:13',
   },
   {
-    dateFrom: '2019-07-29T11:55:56',
-    dateTo: '2019-07-29T13:02:13',
+    dateFrom: '2023-07-29T11:55:56',
+    dateTo: '2023-07-29T13:02:13',
   },
   {
-    dateFrom: '2019-07-05T20:55:52',
-    dateTo: '2019-07-11T11:22:13',
+    dateFrom: '2023-07-05T20:55:52',
+    dateTo: '2023-07-11T11:22:13',
   },
   {
-    dateFrom: '2019-03-12T10:25:57',
-    dateTo: '2019-03-14T11:22:13',
+    dateFrom: '2023-03-12T10:25:57',
+    dateTo: '2023-03-14T11:22:13',
   },
   {
-    dateFrom: '2019-07-10T10:25:57',
-    dateTo: '2019-07-13T11:22:13',
+    dateFrom: '2023-07-10T10:25:57',
+    dateTo: '2023-07-13T11:22:13',
   },
   {
-    dateFrom: '2019-07-11T10:25:57',
+    dateFrom: '2023-07-11T10:25:57',
     dateTo: '2019-07-12T11:22:13',
   },
 
@@ -126,19 +126,6 @@ const createMockDestinations = () => {
 
 };
 
-const createMockOfferIds = () => {
-  const mockOfferIds = [];
-  const offerIdsNumber = getRandomInteger(OFFERS_BY_TYPE_MIN, OFFERS_BY_TYPE_MAX);
-
-  while (mockOfferIds.length < offerIdsNumber) {
-    const mockOfferId = getRandomInteger(1, OFFERS.length);
-    if (!mockOfferIds.includes(String(mockOfferId))) {
-      mockOfferIds.push(String(mockOfferId));
-    }
-  }
-  return mockOfferIds;
-};
-
 const createMockPoints = () => {
   const mockPoints = [];
   for (let i = 0; i < MOCK_POINTS_NUMBER; i++) {
@@ -149,7 +136,7 @@ const createMockPoints = () => {
       dateTo: DATES[i].dateTo,
       destination: `${i + 1}`,
       isFavorite: getRandomArrayElement([true, false]),
-      offers: createMockOfferIds(),
+      offers: ['1', '2', '3'],
       type: getRandomArrayElement(POINT_TYPES)
     };
     mockPoints.push(mockPoint);

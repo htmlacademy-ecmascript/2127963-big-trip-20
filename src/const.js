@@ -1,13 +1,13 @@
 const POINT_TYPES = [
-  'Taxi',
-  'Bus',
-  'Train',
-  'Ship',
-  'Drive',
-  'Flight',
-  'Check-in',
-  'Sightseeing',
-  'Restaurant'
+  'taxi',
+  'bus',
+  'train',
+  'ship',
+  'drive',
+  'flight',
+  'check-in',
+  'sightseeing',
+  'restaurant'
 ];
 
 const SortType = {
@@ -16,4 +16,11 @@ const SortType = {
   TIME: 'sort-time',
 };
 
-export { POINT_TYPES, SortType };
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
+};
+
+export { POINT_TYPES, SortType, FilterType };

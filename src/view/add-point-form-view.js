@@ -1,8 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-function createAddPointFormTemplate() {
-  return (
-    `<li class="trip-events__item">
+const createAddPointFormTemplate = () => (
+  `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
@@ -164,8 +163,7 @@ function createAddPointFormTemplate() {
       </section>
     </form>
   </li>`
-  );
-}
+);
 
 export default class AddPointFormView extends AbstractView {
   get template() {
