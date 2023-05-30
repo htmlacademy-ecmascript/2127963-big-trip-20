@@ -1,6 +1,9 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFullDate } from '../utils/point.js';
 import { getLastWord } from '../utils/utils.js';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => {
   const {type, dateFrom, dateTo, basePrice} = tripPoint;
@@ -207,6 +210,7 @@ export default class EditPointFormView extends AbstractStatefulView {
   #tripDestinations = null;
   #handleFormSubmit = null;
   #handleEditClick = null;
+  #datepicker = null;
 
   constructor({tripPoint, tripOffers, tripDestinations, onFormSubmit, onEditClick}) {
     super();
@@ -224,11 +228,63 @@ export default class EditPointFormView extends AbstractStatefulView {
     return createEditPointFormTemplate(this._state, this.#tripOffers, this.#tripDestinations);
   }
 
+  removeElement() {
+    super.removeElement();
+
+    if (this.#datepicker) {
+      this.#datepicker.destroy();
+      this.#datepicker = null;
+    }
+  }
+
   reset(point) {
     this.updateElement(
       EditPointFormView.parsePointToState(point),
     );
   }
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate,
+    });
+  };
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate,
+    });
+  };
+
+
+  #setDateFrom = () => {
+
+    this.#datepicker = flatpickr(
+      this.element.querySelector('[name="event-start-time"]'),
+      {
+        dateFormat: 'd/m/Y H:i',
+        defaultDate: this._state.dateFrom,
+        maxDate: this._state.dateTo,
+        enableTime: true,
+        onChange: this.#dateFromChangeHandler,
+        'time_24hr': true,
+      },
+    );
+  };
+
+  #setDateTo = () => {
+
+    this.#datepicker = flatpickr(
+      this.element.querySelector('[name="event-end-time"]'),
+      {
+        dateFormat: 'd/m/Y H:i',
+        defaultDate: this._state.dateTo,
+        minDate: this._state.dateFrom,
+        enableTime: true,
+        onChange: this.#dateToChangeHandler,
+        'time_24hr': true,
+      },
+    );
+  };
 
   _restoreHandlers() {
     this.element.querySelector('.event--edit')
@@ -246,6 +302,8 @@ export default class EditPointFormView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination')
       .addEventListener('change', this.#destinationChangeHandler);
 
+    this.#setDateFrom();
+    this.#setDateTo();
   }
 
   #eventTypeChangeHandler = (evt) => {
@@ -272,6 +330,9 @@ export default class EditPointFormView extends AbstractStatefulView {
 
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
+    if (!evt.target.value) {
+      return;
+    }
 
     const updatedDestination = this.#tripDestinations.find((tripDestination) => tripDestination.name === evt.target.value);
 
