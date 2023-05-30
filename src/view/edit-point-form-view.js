@@ -272,6 +272,9 @@ export default class EditPointFormView extends AbstractStatefulView {
 
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
+    if (!evt.target.value) {
+      return;
+    }
 
     const updatedDestination = this.#tripDestinations.find((tripDestination) => tripDestination.name === evt.target.value);
 
