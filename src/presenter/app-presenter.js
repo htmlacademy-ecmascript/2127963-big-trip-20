@@ -4,7 +4,8 @@ import { render, remove } from '../framework/render.js';
 import PointPresenter from './point-presenter.js';
 //import { updateItem } from '../utils/utils.js';
 import { comparePrice, compareDuration } from '../utils/point.js';
-import { SortType, UpdateType, UserAction } from '../const.js';
+import {filter} from '../utils/filter-util.js';
+import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import NoPointsView from '../view/no-points-view.js';
 
 export default class AppPresenter {
@@ -12,33 +13,43 @@ export default class AppPresenter {
   #pointModel = null;
   #offerModel = null;
   #destinationModel = null;
+  #filterModel = null;
 
   #eventListComponent = new EventsListView();
   #sortComponent = null;
-  #noPointsComponent = new NoPointsView();
+  #noPointsComponent = null;
 
   //#tripPoints = [];
   #pointPresenters = new Map();
   #currentSortType = SortType.DAY;
+  #filterType = FilterType.EVERYTHING;
   //#sourcedTripPoints = [];
 
-  constructor({eventContainer, pointModel, offerModel, destinationModel}) {
+  constructor({eventContainer, pointModel, offerModel, destinationModel, filterModel}) {
     this.#eventContainer = eventContainer;
     this.#pointModel = pointModel;
     this.#offerModel = offerModel;
     this.#destinationModel = destinationModel;
+    this.#filterModel = filterModel;
 
     this.#pointModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
+    this.#filterType = this.#filterModel.filter;
+    const points = this.#pointModel.points;
+    const filteredPoints = filter[this.#filterType](points);
+
     switch (this.#currentSortType) {
       case SortType.PRICE:
-        return [...this.#pointModel.points].sort(comparePrice);
+        //return [...this.#pointModel.points].sort(comparePrice);
+        return filteredPoints.sort(comparePrice);
       case SortType.TIME:
-        return [...this.#pointModel.points].sort(compareDuration);
+        //return [...this.#pointModel.points].sort(compareDuration);
+        return filteredPoints.sort(compareDuration);
     }
-    return this.#pointModel.points;
+    return filteredPoints;
   }
 
   init() {
@@ -78,9 +89,9 @@ export default class AppPresenter {
   };
 
   //#handlePointChange = (updatedPoint) => {
-    //this.#tripPoints = updateItem(this.#tripPoints, updatedPoint);
-    //this.#sourcedTripPoints = updateItem(this.#sourcedTripPoints, updatedPoint);
-    //this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  //this.#tripPoints = updateItem(this.#tripPoints, updatedPoint);
+  //this.#sourcedTripPoints = updateItem(this.#sourcedTripPoints, updatedPoint);
+  //this.#pointPresenters.get(updatedPoint.id).init(updatedPoint);
   //};
   #handleViewAction = (actionType, updateType, update) => {
     // Здесь будем вызывать обновление модели.
@@ -167,6 +178,14 @@ export default class AppPresenter {
     points.forEach((point) => this.#renderTripPoint(point));
   }
 
+  #rennderNoPoints() {
+    this.#noPointsComponent = new NoPointsView ({
+      filterType: this.#filterType
+    });
+
+    render(this.#noPointsComponent, this.#eventListComponent.element);
+  }
+
   #renderEventList() {
     render(this.#eventListComponent, this.#eventContainer);
 
@@ -174,8 +193,12 @@ export default class AppPresenter {
       render(new NoPointsView(), this.#eventListComponent.element);
       return;
     }*/
-    if (!this.points.length) {
+    /*if (!this.points.length) {
       render(this.#noPointsComponent, this.#eventListComponent.element);
+      return;
+    }*/
+    if (!this.points.length) {
+      this.#rennderNoPoints();
       return;
     }
     //this.#renderEvents();
