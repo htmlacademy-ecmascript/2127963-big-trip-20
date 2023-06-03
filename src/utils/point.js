@@ -65,7 +65,9 @@ const compareDuration = (pointA, pointB) => {
   return durationB - durationA;
 };
 
+const areDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
+
 const comparePrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
 
 
-export { comparePrice, compareDuration, humanizeDate, humanizeFullDate, humanizeTime, getDuration, getTimeDifference, isDateInPast, isDateInFUture, isSameDate, compareDates };
+export { comparePrice, compareDuration, humanizeDate, humanizeFullDate, humanizeTime, getDuration, getTimeDifference, isDateInPast, isDateInFUture, isSameDate, compareDates, areDatesEqual };

@@ -3,6 +3,7 @@ import { humanizeFullDate } from '../utils/point.js';
 import { getLastWord } from '../utils/utils.js';
 import flatpickr from 'flatpickr';
 
+
 import 'flatpickr/dist/flatpickr.min.css';
 
 const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => {
@@ -209,16 +210,18 @@ export default class EditPointFormView extends AbstractStatefulView {
   #tripOffers = null;
   #tripDestinations = null;
   #handleFormSubmit = null;
+  #handleDeleteClick = null;
   #handleEditClick = null;
   #datepicker = null;
 
-  constructor({tripPoint, tripOffers, tripDestinations, onFormSubmit, onEditClick}) {
+  constructor({tripPoint, tripOffers, tripDestinations, onFormSubmit, onEditClick, onDeleteClick}) {
     super();
 
     this._setState(EditPointFormView.parsePointToState(tripPoint));
     this.#tripOffers = tripOffers;
     this.#tripDestinations = tripDestinations;
     this.#handleFormSubmit = onFormSubmit;
+    this.#handleDeleteClick = onDeleteClick;
     this.#handleEditClick = onEditClick;
 
     this._restoreHandlers();
@@ -302,6 +305,9 @@ export default class EditPointFormView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination')
       .addEventListener('change', this.#destinationChangeHandler);
 
+    this.element.querySelector('.event__reset-btn')
+      .addEventListener('click', this.#formDeleteClickHandler);
+
     this.#setDateFrom();
     this.#setDateTo();
   }
@@ -348,6 +354,11 @@ export default class EditPointFormView extends AbstractStatefulView {
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit(EditPointFormView.parseStateToPoint(this._state));
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(EditPointFormView.parseStateToPoint(this._state));
   };
 
   static parsePointToState(tripPoint) {
