@@ -2,13 +2,16 @@ import SortingView from '../view/sorting-view.js';
 import EventsListView from '../view/events-list-view.js';
 import { render, remove } from '../framework/render.js';
 import PointPresenter from './point-presenter.js';
+import NewPointPresenter from './new-point-presenter.js';
 //import { updateItem } from '../utils/utils.js';
 import { comparePrice, compareDuration } from '../utils/point.js';
 import {filter} from '../utils/filter-util.js';
 import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import NoPointsView from '../view/no-points-view.js';
+import NewPointButtonView from '../view/new-point-button-view.js';
 
 export default class AppPresenter {
+  #mainContainer = null;
   #eventContainer = null;
   #pointModel = null;
   #offerModel = null;
@@ -18,22 +21,54 @@ export default class AppPresenter {
   #eventListComponent = new EventsListView();
   #sortComponent = null;
   #noPointsComponent = null;
+  #newPointButtonComponent = null;
 
   //#tripPoints = [];
   #pointPresenters = new Map();
+  #newPointPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
   //#sourcedTripPoints = [];
 
-  constructor({eventContainer, pointModel, offerModel, destinationModel, filterModel}) {
+  constructor({mainContainer, eventContainer, pointModel, offerModel, destinationModel, filterModel}) {
+    this.#mainContainer = mainContainer;
     this.#eventContainer = eventContainer;
     this.#pointModel = pointModel;
     this.#offerModel = offerModel;
     this.#destinationModel = destinationModel;
     this.#filterModel = filterModel;
 
+    const handleNewPointButtonClick = () => {
+      this.createPoint();
+      this.#newPointButtonComponent.element.disabled = true;
+    };
+
+    const handleNewPointFormClose = () => {
+      this.#newPointButtonComponent.element.disabled = false;
+    };
+
+    this.#newPointButtonComponent = new NewPointButtonView({
+      onClick: handleNewPointButtonClick,
+    });
+
+    this.#newPointPresenter = new NewPointPresenter({
+      eventListContainer: this.#eventListComponent.element,
+      tripOffers: this.#offerModel.offers,
+      tripDestinations: this.#destinationModel.destinations,
+      //tripOffers: this.#offerModel,
+      //tripDestinations: this.#destinationModel,
+      onDataChange: this.#handleViewAction,
+      onDestroy: handleNewPointFormClose,
+    });
+
     this.#pointModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
+  }
+
+  createPoint() {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#newPointPresenter.init();
   }
 
   get points() {
@@ -57,6 +92,7 @@ export default class AppPresenter {
     //this.#sourcedTripPoints = [...this.#pointModel.points];
 
     this.#renderBoard();
+    render(this.#newPointButtonComponent, this.#mainContainer);
   }
 
   /*#getOffersByType(tripPoint, offers) {
@@ -85,6 +121,7 @@ export default class AppPresenter {
   }
 
   #handleModeChange = () => {
+    this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
@@ -178,7 +215,7 @@ export default class AppPresenter {
     points.forEach((point) => this.#renderTripPoint(point));
   }
 
-  #rennderNoPoints() {
+  #renderNoPoints() {
     this.#noPointsComponent = new NoPointsView ({
       filterType: this.#filterType
     });
@@ -198,7 +235,7 @@ export default class AppPresenter {
       return;
     }*/
     if (!this.points.length) {
-      this.#rennderNoPoints();
+      this.#renderNoPoints();
       return;
     }
     //this.#renderEvents();
@@ -212,11 +249,16 @@ export default class AppPresenter {
 
   #clearBoard({resetSortType = false} = {}) {
 
+    this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
 
     remove(this.#sortComponent);
     remove(this.#noPointsComponent);
+
+    if (this.#noPointsComponent) {
+      remove(this.#noPointsComponent);
+    }
 
 
     if (resetSortType) {

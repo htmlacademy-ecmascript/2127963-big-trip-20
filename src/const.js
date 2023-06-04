@@ -10,6 +10,39 @@ const POINT_TYPES = [
   'restaurant'
 ];
 
+const DEFAULT_POINT = {
+  //id: '',
+  basePrice: 0,
+  dateFrom: null,
+  dateTo: null,
+  destination: null,
+  isFavorite: false,
+  offers: [],
+  type: 'flight',
+};
+
+/*const DEFAULT_OFFERS = [
+  {
+    type: '',
+    offers: [
+      {
+        id: '',
+        title: '',
+        price: 0
+      }
+    ]
+  }
+];
+
+const DEFAULT_DESTINATIONS = [
+  {
+    id: null,
+    name: null,
+    description: null,
+    pictures: []
+  }
+];*/
+
 const SortType = {
   DAY: 'sort-day',
   PRICE: 'sort-price',
@@ -35,4 +68,4 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
-export { POINT_TYPES, SortType, FilterType, UserAction, UpdateType };
+export { POINT_TYPES, SortType, FilterType, UserAction, UpdateType, DEFAULT_POINT/*, DEFAULT_OFFERS, DEFAULT_DESTINATIONS*/ };

@@ -1,4 +1,4 @@
-import { render } from './framework/render.js';
+//import { render } from './framework/render.js';
 //import FilterView from './view/filter-view.js';
 import AppPresenter from './presenter/app-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
@@ -14,7 +14,7 @@ import FilterModel from './model/filter-model.js';
     count: 0,
   },
 ];*/
-
+const tripMainElement = document.querySelector('.trip-main');
 const tripEventsElement = document.querySelector('.trip-events');
 const pointModel = new PointModel();
 const offerModel = new OfferModel();
@@ -32,6 +32,7 @@ const filterElement = document.querySelector('.trip-controls__filters');
 }), filterElement);*/
 
 const appPresenter = new AppPresenter({
+  mainContainer: tripMainElement,
   eventContainer: tripEventsElement,
   pointModel,
   offerModel,
