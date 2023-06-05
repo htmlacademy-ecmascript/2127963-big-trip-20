@@ -89,7 +89,6 @@ export default class PointPresenter {
   }
 
   #handleFavoriteClick = () => {
-    //this.#handleDataChange({...this.#tripPoint, isFavorite: !this.#tripPoint.isFavorite});
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
@@ -98,7 +97,6 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = (update) => {
-    //this.#handleDataChange(tripPoint);
     const isMinorUpdate =
     !areDatesEqual(this.#tripPoint.dateFrom, update.dateFrom);
 

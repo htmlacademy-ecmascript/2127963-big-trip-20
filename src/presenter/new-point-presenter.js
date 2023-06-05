@@ -1,5 +1,6 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
-import EditPointFormView from '../view/edit-point-form-view.js';
+import AddPointFormView from '../view/add-point-form-view.js';
+//import EditPointFormView from '../view/edit-point-form-view.js';
 import {nanoid} from 'nanoid';
 import {UserAction, UpdateType} from '../const.js';
 
@@ -10,7 +11,7 @@ export default class NewPointPresenter {
   #handleDataChange = null;
   #handleDestroy = null;
 
-  #eventEditComponent = null;
+  #eventAddComponent = null;
 
   constructor({eventListContainer, tripOffers, tripDestinations, onDataChange, onDestroy}) {
     this.#eventListContainer = eventListContainer;
@@ -21,31 +22,31 @@ export default class NewPointPresenter {
   }
 
   init() {
-    if (this.#eventEditComponent !== null) {
+    if (this.#eventAddComponent !== null) {
       return;
     }
 
-    this.#eventEditComponent = new EditPointFormView({
+    this.#eventAddComponent = new AddPointFormView({
       tripOffers: this.#tripOffers,
       tripDestinations: this.#tripDestinations,
       onFormSubmit: this.#handleFormSubmit,
-      onDeleteClick: this.#handleDeleteClick
+      onCancelClick: this.#handleCancelClick
     });
 
-    render(this.#eventEditComponent, this.#eventListContainer, RenderPosition.AFTERBEGIN);
+    render(this.#eventAddComponent, this.#eventListContainer, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this.#escKeyDownHandler);
   }
 
   destroy() {
-    if (this.#eventEditComponent === null) {
+    if (this.#eventAddComponent === null) {
       return;
     }
 
     this.#handleDestroy();
 
-    remove(this.#eventEditComponent);
-    this.#eventEditComponent = null;
+    remove(this.#eventAddComponent);
+    this.#eventAddComponent = null;
 
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
@@ -59,7 +60,7 @@ export default class NewPointPresenter {
     this.destroy();
   };
 
-  #handleDeleteClick = () => {
+  #handleCancelClick = () => {
     this.destroy();
   };
 

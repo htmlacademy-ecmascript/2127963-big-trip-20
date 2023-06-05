@@ -1,7 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFullDate } from '../utils/point.js';
 import { getLastWord } from '../utils/utils.js';
-import { DEFAULT_POINT } from '../const.js';
 import flatpickr from 'flatpickr';
 
 
@@ -20,12 +19,6 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
 
     return renderedDestinations;
   };
-  ///////////
-  //const destinationById = tripDestinations.find((tripDestination) => tripDestination.id === tripPoint.destination);
-
-  //const {name, description, pictures} = destinationById;
-
-  //let selectedDestination = '';
 
   const getDestinationById = () => {
     if (tripPoint.destination !== null) {
@@ -66,8 +59,6 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
       });
     }
 
-    //return renderedPictures;
-
     return (renderedPictures === '') ? renderedPictures : (
       `<div class="event__photos-container">
         <div class="event__photos-tape">
@@ -76,25 +67,6 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
       </div>`
     );
   };
-
-  /*const renderPicturesContainer = () => {
-    if (selectedDestination.pictures.length) {
-
-      return (
-        `<div class="event__photos-container">
-          <div class="event__photos-tape">
-            ${renderPictures()}
-         </div>
-        </div>`
-      );
-    }
-  };*/
-
-  /* const renderDestionationDescriptionContainer = () => (description)
-    ? `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${description}</p>
-        ${renderPictures()}`
-    : '';*/
 
   const renderDestionationDescription = () => {
     if (tripPoint.destination === null) {
@@ -106,20 +78,8 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
       : '';
   };
 
-
-  //////////////
-
-  /*const getOffersByType = (point, offers) => {
-    const offersByType = offers.find((offer) => offer.type === point.type);
-    return offersByType.offers;
-  };
-
-  const availableOffers = getOffersByType(tripPoint, tripOffers);*/
-
   const getOffersByType = () => {
-    /*if (tripPoint.type === '') {
-      return '';
-    }*/
+
     const offersByType = tripOffers.find((offer) => offer.type === tripPoint.type);
     return offersByType.offers;
   };
@@ -127,9 +87,6 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
   const availableOffers = getOffersByType();
 
   const renderAvailableOffers = () => {
-    /*if (availableOffers === '') {
-      return '';
-    }*/
 
     let renderedOffers = '';
 
@@ -151,31 +108,19 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
     return renderedOffers;
   };
 
-  /*const renderAvailableOffersContainer = () => (availableOffers.length)
-    ? `<section class="event__section  event__section--offers">
-        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-        <div class="event__available-offers">
-        ${renderAvailableOffers()}
-        </div>
-      </section>`
-    : '';*/
-
   const renderAvailableOffersContainer = () => {
     if (availableOffers === '') {
       return '';
     }
     return (
       (availableOffers.length)
-        ? `
-        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-        <div class="event__available-offers">
-        ${renderAvailableOffers()}
-        </div>
-      `
+        ? `<h3 class="event__section-title  event__section-title--offers">Offers</h3>
+          <div class="event__available-offers">
+          ${renderAvailableOffers()}
+          </div>`
         : ''
     );
   };
-
 
   return (
     `<li class="trip-events__item">
@@ -294,10 +239,9 @@ export default class EditPointFormView extends AbstractStatefulView {
   #handleEditClick = null;
   #datepicker = null;
 
-  constructor({tripPoint = DEFAULT_POINT , tripOffers, tripDestinations, onFormSubmit, onEditClick, onDeleteClick}) {
+  constructor({tripPoint, tripOffers, tripDestinations, onFormSubmit, onEditClick, onDeleteClick}) {
     super();
 
-    //this._setState(EditPointFormView.parsePointToState(tripPoint));
     this._setState(EditPointFormView.parsePointToState({tripPoint}));
     this.#tripOffers = tripOffers;
     this.#tripDestinations = tripDestinations;
@@ -430,7 +374,6 @@ export default class EditPointFormView extends AbstractStatefulView {
       destination: updatedDestinationId
     });
   };
-
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();

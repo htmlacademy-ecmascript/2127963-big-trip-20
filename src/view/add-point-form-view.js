@@ -1,7 +1,129 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import { humanizeFullDate } from '../utils/point.js';
+import { getLastWord } from '../utils/utils.js';
+import { DEFAULT_POINT } from '../const.js';
+import flatpickr from 'flatpickr';
 
-const createAddPointFormTemplate = () => (
-  `<li class="trip-events__item">
+
+import 'flatpickr/dist/flatpickr.min.css';
+
+const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => {
+  const {type, dateFrom, dateTo, basePrice} = tripPoint;
+
+  const renderDestionationList = () => {
+    let renderedDestinations = '';
+
+    tripDestinations.forEach((tripDestination) => {
+      const renderedDestination = `<option value="${tripDestination.name}"></option>`;
+      renderedDestinations += renderedDestination;
+    });
+
+    return renderedDestinations;
+  };
+
+  const getDestinationById = () => {
+    if (tripPoint.destination !== null) {
+      return tripDestinations.find((tripDestination) => tripDestination.id === tripPoint.destination);
+    }
+  };
+
+  const selectedDestination = getDestinationById();
+
+
+  const renderSelectedDestination = () => {
+    if (tripPoint.destination !== null) {
+      return (
+        `<input class="event__input  event__input--destination"
+      id="event-destination-1"
+      type="text"
+      name="event-destination"
+      value="${selectedDestination.name}"
+      list="destination-list-1">`
+      );
+    }
+    return (
+      `<input class="event__input  event__input--destination"
+    id="event-destination-1"
+    type="text"
+    name="event-destination"
+    value=""
+    list="destination-list-1">`
+    );
+  };
+
+  const renderPictures = () => {
+    let renderedPictures = '';
+    if (tripPoint.destination !== null) {
+      selectedDestination.pictures.forEach((picture) => {
+        const renderedPicture = `<img class="event__photo" src="${picture.src}" alt="${picture.description}"></img>`;
+        renderedPictures += renderedPicture;
+      });
+    }
+
+    return (renderedPictures === '') ? renderedPictures : (
+      `<div class="event__photos-container">
+        <div class="event__photos-tape">
+          ${renderedPictures}
+       </div>
+      </div>`
+    );
+  };
+
+  const renderDestionationDescription = () => {
+    if (tripPoint.destination === null) {
+      return '';
+    }
+    return (selectedDestination.description)
+      ? `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
+        <p class="event__destination-description">${selectedDestination.description}</p>`
+      : '';
+  };
+
+  const getOffersByType = () => {
+    const offersByType = tripOffers.find((offer) => offer.type === tripPoint.type);
+    return offersByType.offers;
+  };
+
+  const availableOffers = getOffersByType();
+
+  const renderAvailableOffers = () => {
+
+    let renderedOffers = '';
+
+    availableOffers.forEach((availableOffer) => {
+      const {id, title, price} = availableOffer;
+
+      const renderedOffer = `
+       <div class="event__offer-selector">
+          <input class="event__offer-checkbox  visually-hidden" data-offer-id="${id}" id="event-offer-${getLastWord(title)}-${id}" type="checkbox" name="event-offer-${getLastWord(title)}" ${tripPoint.offers.includes(id) ? 'checked' : ''}>
+          <label class="event__offer-label" for="event-offer-${getLastWord(title)}-${id}">
+            <span class="event__offer-title">${title}</span>
+            &plus;&euro;&nbsp;
+            <span class="event__offer-price">${price}</span>
+          </label>
+        </div>
+          `;
+      renderedOffers += renderedOffer;
+    });
+    return renderedOffers;
+  };
+
+  const renderAvailableOffersContainer = () => {
+    if (availableOffers === '') {
+      return '';
+    }
+    return (
+      (availableOffers.length)
+        ? `<h3 class="event__section-title  event__section-title--offers">Offers</h3>
+          <div class="event__available-offers">
+          ${renderAvailableOffers()}
+          </div>`
+        : ''
+    );
+  };
+
+  return (
+    `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
@@ -65,22 +187,22 @@ const createAddPointFormTemplate = () => (
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            Flight
+            ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Geneva" list="destination-list-1">
+
+          ${renderSelectedDestination()}
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+            ${renderDestionationList()}
           </datalist>
+
         </div>
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="19/03/19 00:00">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${humanizeFullDate(dateFrom)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="19/03/19 00:00">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${humanizeFullDate(dateTo)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -88,85 +210,181 @@ const createAddPointFormTemplate = () => (
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
         <button class="event__reset-btn" type="reset">Cancel</button>
+
       </header>
       <section class="event__details">
         <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
-          <div class="event__available-offers">
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-              <label class="event__offer-label" for="event-offer-luggage-1">
-                <span class="event__offer-title">Add luggage</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">30</span>
-              </label>
-            </div>
-
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" checked>
-              <label class="event__offer-label" for="event-offer-comfort-1">
-                <span class="event__offer-title">Switch to comfort class</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">100</span>
-              </label>
-            </div>
-
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal">
-              <label class="event__offer-label" for="event-offer-meal-1">
-                <span class="event__offer-title">Add meal</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">15</span>
-              </label>
-            </div>
-
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats">
-              <label class="event__offer-label" for="event-offer-seats-1">
-                <span class="event__offer-title">Choose seats</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">5</span>
-              </label>
-            </div>
-
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train">
-              <label class="event__offer-label" for="event-offer-train-1">
-                <span class="event__offer-title">Travel by train</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">40</span>
-              </label>
-            </div>
-          </div>
+          ${renderAvailableOffersContainer()}
         </section>
-
-        <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
-
-          <div class="event__photos-container">
-            <div class="event__photos-tape">
-              <img class="event__photo" src="img/photos/1.jpg" alt="Event photo">
-              <img class="event__photo" src="img/photos/2.jpg" alt="Event photo">
-              <img class="event__photo" src="img/photos/3.jpg" alt="Event photo">
-              <img class="event__photo" src="img/photos/4.jpg" alt="Event photo">
-              <img class="event__photo" src="img/photos/5.jpg" alt="Event photo">
-            </div>
-          </div>
-        </section>
+        ${renderDestionationDescription()}
+        ${renderPictures()}
       </section>
     </form>
-  </li>`
-);
+    </li>`
+  );
+};
 
-export default class AddPointFormView extends AbstractView {
-  get template() {
-    return createAddPointFormTemplate();
+export default class AddPointFormView extends AbstractStatefulView {
+  #tripOffers = null;
+  #tripDestinations = null;
+  #handleFormSubmit = null;
+  #handleCancelClick = null;
+  #datepicker = null;
+
+  constructor({tripPoint = DEFAULT_POINT , tripOffers, tripDestinations, onFormSubmit, onCancelClick}) {
+    super();
+
+    this._setState(AddPointFormView.parsePointToState({tripPoint}));
+    this.#tripOffers = tripOffers;
+    this.#tripDestinations = tripDestinations;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleCancelClick = onCancelClick;
+
+    this._restoreHandlers();
   }
+
+  get template() {
+    return createEditPointFormTemplate(this._state, this.#tripOffers, this.#tripDestinations);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this.#datepicker) {
+      this.#datepicker.destroy();
+      this.#datepicker = null;
+    }
+  }
+
+  reset(point) {
+    this.updateElement(
+      AddPointFormView.parsePointToState(point),
+    );
+  }
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate,
+    });
+  };
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate,
+    });
+  };
+
+
+  #setDateFrom = () => {
+
+    this.#datepicker = flatpickr(
+      this.element.querySelector('[name="event-start-time"]'),
+      {
+        dateFormat: 'd/m/Y H:i',
+        defaultDate: this._state.dateFrom,
+        maxDate: this._state.dateTo,
+        enableTime: true,
+        onChange: this.#dateFromChangeHandler,
+        'time_24hr': true,
+      },
+    );
+  };
+
+  #setDateTo = () => {
+
+    this.#datepicker = flatpickr(
+      this.element.querySelector('[name="event-end-time"]'),
+      {
+        dateFormat: 'd/m/Y H:i',
+        defaultDate: this._state.dateTo,
+        minDate: this._state.dateFrom,
+        enableTime: true,
+        onChange: this.#dateToChangeHandler,
+        'time_24hr': true,
+      },
+    );
+  };
+
+  _restoreHandlers() {
+    this.element.querySelector('.event--edit')
+      .addEventListener('submit', this.#formSubmitHandler);
+
+    this.element.querySelector('.event__type-group')
+      .addEventListener('change', this.#eventTypeChangeHandler);
+
+    this.element.querySelector('.event__section--offers')
+      .addEventListener('change', this.#eventCheckHandler);
+
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#destinationChangeHandler);
+
+    this.element.querySelector('.event__reset-btn')
+      .addEventListener('click', this.#formCancelClickHandler);
+
+    this.#setDateFrom();
+    this.#setDateTo();
+  }
+
+  #eventTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    this.updateElement({
+
+      ...this._state,
+      type: evt.target.value,
+      offers: []
+    });
+  };
+
+  #eventCheckHandler = (evt) => {
+    evt.preventDefault();
+
+    const updatedOffers = Array.from(this.element.querySelectorAll('.event__offer-checkbox:checked'));
+
+    this._setState({
+      ...this.state,
+      offers: updatedOffers.map((element) => element.dataset.offerId)
+    });
+  };
+
+  #destinationChangeHandler = (evt) => {
+    evt.preventDefault();
+    if (!evt.target.value) {
+      return;
+    }
+
+    const updatedDestination = this.#tripDestinations.find((tripDestination) => tripDestination.name === evt.target.value);
+
+    const updatedDestinationId = (updatedDestination) ? updatedDestination.id : null;
+
+    this.updateElement({
+      ...this._state,
+      destination: updatedDestinationId
+    });
+  };
+
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit(AddPointFormView.parseStateToPoint(this._state));
+  };
+
+  #formCancelClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleCancelClick(AddPointFormView.parseStateToPoint(this._state));
+  };
+
+  static parsePointToState({tripPoint}) {
+    return {...tripPoint};
+  }
+
+  static parseStateToPoint(state) {
+    return {...state};
+  }
+
 }

@@ -21,28 +21,6 @@ const DEFAULT_POINT = {
   type: 'flight',
 };
 
-/*const DEFAULT_OFFERS = [
-  {
-    type: '',
-    offers: [
-      {
-        id: '',
-        title: '',
-        price: 0
-      }
-    ]
-  }
-];
-
-const DEFAULT_DESTINATIONS = [
-  {
-    id: null,
-    name: null,
-    description: null,
-    pictures: []
-  }
-];*/
-
 const SortType = {
   DAY: 'sort-day',
   PRICE: 'sort-price',
@@ -58,8 +36,8 @@ const FilterType = {
 
 const UserAction = {
   UPDATE_POINT: 'UPDATE_POINT',
-  ADD_POINT: 'UPDATE_POINT',
-  DELETE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
 };
 
 const UpdateType = {
@@ -68,4 +46,4 @@ const UpdateType = {
   MAJOR: 'MAJOR',
 };
 
-export { POINT_TYPES, SortType, FilterType, UserAction, UpdateType, DEFAULT_POINT/*, DEFAULT_OFFERS, DEFAULT_DESTINATIONS*/ };
+export { POINT_TYPES, SortType, FilterType, UserAction, UpdateType, DEFAULT_POINT};
