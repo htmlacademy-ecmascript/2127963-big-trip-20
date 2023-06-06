@@ -3,6 +3,7 @@ import { humanizeFullDate } from '../utils/point.js';
 import { getLastWord } from '../utils/utils.js';
 import { DEFAULT_POINT } from '../const.js';
 import flatpickr from 'flatpickr';
+import he from 'he';
 
 
 import 'flatpickr/dist/flatpickr.min.css';
@@ -37,7 +38,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
       id="event-destination-1"
       type="text"
       name="event-destination"
-      value="${selectedDestination.name}"
+      value="${he.encode(`${selectedDestination.name}`)}"
       list="destination-list-1">`
       );
     }
@@ -210,10 +211,13 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${he.encode(`${basePrice}`)}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit"
+        ${tripPoint.dateFrom && tripPoint.dateTo && selectedDestination?.name && tripPoint.basePrice
+      ? ''
+      : 'disabled'}>Save</button>
         <button class="event__reset-btn" type="reset">Cancel</button>
 
       </header>
@@ -266,6 +270,12 @@ export default class AddPointFormView extends AbstractStatefulView {
       AddPointFormView.parsePointToState(point),
     );
   }
+
+  #priceHandler = (evt) => {
+    const previousPrice = this._state.basePrice;
+    const price = Number(evt.target.value);
+    this.updateElement({ ...this._state, basePrice: !Number.isNaN(price) ? Math.round(price) : previousPrice});
+  };
 
   #dateFromChangeHandler = ([userDate]) => {
     this.updateElement({
@@ -325,6 +335,9 @@ export default class AddPointFormView extends AbstractStatefulView {
 
     this.element.querySelector('.event__reset-btn')
       .addEventListener('click', this.#formCancelClickHandler);
+
+    this.element.querySelector('.event__input--price')
+      .addEventListener('change', this.#priceHandler);
 
     this.#setDateFrom();
     this.#setDateTo();

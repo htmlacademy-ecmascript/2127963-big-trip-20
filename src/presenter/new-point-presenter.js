@@ -1,6 +1,5 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
 import AddPointFormView from '../view/add-point-form-view.js';
-//import EditPointFormView from '../view/edit-point-form-view.js';
 import {nanoid} from 'nanoid';
 import {UserAction, UpdateType} from '../const.js';
 

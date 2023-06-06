@@ -1,7 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-const createFilterItemTemplate = (filter, /*isChecked*/ currentFilterType) => {
-  const {type/*, count*/} = filter;
+const createFilterItemTemplate = (filter, currentFilterType) => {
+  const {type} = filter;
 
   return (
     `<div class="trip-filters__filter">
@@ -16,10 +16,10 @@ const createFilterItemTemplate = (filter, /*isChecked*/ currentFilterType) => {
     </div>`
   );
 };
-//${isChecked ? 'checked' : ''}
+
 const createFilterTemplate = (filterItems, currentFilterType) => {
   const filterItemsTemplate = filterItems
-    //.map((filter, index) => createFilterItemTemplate(filter, index === 0))
+
     .map((filter) => createFilterItemTemplate(filter, currentFilterType))
     .join('');
 
@@ -36,7 +36,6 @@ export default class FilterView extends AbstractView {
   #currentFilter = null;
   #handleFilterTypeChange = null;
 
-  //constructor({filters}) {
   constructor({filters, currentFilterType, onFilterTypeChange}) {
     super();
     this.#filters = filters;
@@ -47,7 +46,6 @@ export default class FilterView extends AbstractView {
   }
 
   get template() {
-    //return createFilterTemplate(this.#filters);
     return createFilterTemplate(this.#filters, this.#currentFilter);
   }
 

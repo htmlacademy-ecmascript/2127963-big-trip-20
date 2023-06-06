@@ -23,7 +23,7 @@ export default class NoPointsView extends AbstractView {
   }
 
   get template() {
-    //return createNoPointsTemplate();
+
     return createNoPointsTemplate(this.#filterType);
   }
 }

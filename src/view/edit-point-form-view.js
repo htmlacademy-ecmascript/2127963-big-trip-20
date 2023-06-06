@@ -2,6 +2,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFullDate } from '../utils/point.js';
 import { getLastWord } from '../utils/utils.js';
 import flatpickr from 'flatpickr';
+import he from 'he';
 
 
 import 'flatpickr/dist/flatpickr.min.css';
@@ -36,7 +37,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
       id="event-destination-1"
       type="text"
       name="event-destination"
-      value="${selectedDestination.name}"
+      value="${he.encode(`${selectedDestination.name}`)}"
       list="destination-list-1">`
       );
     }
@@ -210,7 +211,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${he.encode(`${basePrice}`)}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -236,10 +237,10 @@ export default class EditPointFormView extends AbstractStatefulView {
   #tripDestinations = null;
   #handleFormSubmit = null;
   #handleDeleteClick = null;
-  #handleEditClick = null;
+  #handleEditCloseClick = null;
   #datepicker = null;
 
-  constructor({tripPoint, tripOffers, tripDestinations, onFormSubmit, onEditClick, onDeleteClick}) {
+  constructor({tripPoint, tripOffers, tripDestinations, onFormSubmit, onEditCloseClick, onDeleteClick}) {
     super();
 
     this._setState(EditPointFormView.parsePointToState({tripPoint}));
@@ -247,7 +248,7 @@ export default class EditPointFormView extends AbstractStatefulView {
     this.#tripDestinations = tripDestinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleDeleteClick = onDeleteClick;
-    this.#handleEditClick = onEditClick;
+    this.#handleEditCloseClick = onEditCloseClick;
 
     this._restoreHandlers();
   }
@@ -271,6 +272,12 @@ export default class EditPointFormView extends AbstractStatefulView {
     );
   }
 
+  #priceHandler = (evt) => {
+    const previousPrice = this._state.basePrice;
+    const price = Number(evt.target.value);
+    this.updateElement({ ...this._state, basePrice: !Number.isNaN(price) ? Math.round(price) : previousPrice});
+  };
+
   #dateFromChangeHandler = ([userDate]) => {
     this.updateElement({
       dateFrom: userDate,
@@ -289,7 +296,7 @@ export default class EditPointFormView extends AbstractStatefulView {
     this.#datepicker = flatpickr(
       this.element.querySelector('[name="event-start-time"]'),
       {
-        dateFormat: 'd/m/Y H:i',
+        dateFormat: 'd/m/y H:i',
         defaultDate: this._state.dateFrom,
         maxDate: this._state.dateTo,
         enableTime: true,
@@ -304,7 +311,7 @@ export default class EditPointFormView extends AbstractStatefulView {
     this.#datepicker = flatpickr(
       this.element.querySelector('[name="event-end-time"]'),
       {
-        dateFormat: 'd/m/Y H:i',
+        dateFormat: 'd/m/y H:i',
         defaultDate: this._state.dateTo,
         minDate: this._state.dateFrom,
         enableTime: true,
@@ -319,7 +326,7 @@ export default class EditPointFormView extends AbstractStatefulView {
       .addEventListener('submit', this.#formSubmitHandler);
 
     this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#editClickHandler);
+      .addEventListener('click', this.#editCloseClickHandler);
 
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#eventTypeChangeHandler);
@@ -332,6 +339,9 @@ export default class EditPointFormView extends AbstractStatefulView {
 
     this.element.querySelector('.event__reset-btn')
       .addEventListener('click', this.#formDeleteClickHandler);
+
+    this.element.querySelector('.event__input--price')
+      .addEventListener('change', this.#priceHandler);
 
     this.#setDateFrom();
     this.#setDateTo();
@@ -393,8 +403,8 @@ export default class EditPointFormView extends AbstractStatefulView {
     return {...state};
   }
 
-  #editClickHandler = (evt) => {
+  #editCloseClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleEditClick();
+    this.#handleEditCloseClick();
   };
 }

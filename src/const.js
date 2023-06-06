@@ -11,8 +11,7 @@ const POINT_TYPES = [
 ];
 
 const DEFAULT_POINT = {
-  //id: '',
-  basePrice: 0,
+  basePrice: '',
   dateFrom: null,
   dateTo: null,
   destination: null,

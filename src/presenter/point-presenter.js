@@ -54,9 +54,7 @@ export default class PointPresenter {
       tripDestinations: this.#tripDestinations,
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,
-      onEditClick: () => {
-        this.#replaceFormByPoint();
-      }
+      onEditCloseClick: this.#hadleEditCloseClick
     });
 
     if (previousEventComponent === null || previousEventEditComponent === null) {
@@ -87,6 +85,11 @@ export default class PointPresenter {
     remove(this.#eventComponent);
     remove(this.#eventEditComponent);
   }
+
+  #hadleEditCloseClick = () => {
+    this.#eventEditComponent.reset(this.#tripPoint);
+    this.#replaceFormByPoint();
+  };
 
   #handleFavoriteClick = () => {
     this.#handleDataChange(
