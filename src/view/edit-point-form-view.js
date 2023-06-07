@@ -268,7 +268,7 @@ export default class EditPointFormView extends AbstractStatefulView {
 
   reset(point) {
     this.updateElement(
-      EditPointFormView.parsePointToState(point),
+      EditPointFormView.parsePointToState({tripPoint: point}),
     );
   }
 
