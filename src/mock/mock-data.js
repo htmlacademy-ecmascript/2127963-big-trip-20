@@ -40,8 +40,8 @@ const DESCRIPTIONS = [
 
 const DATES = [
   {
-    dateFrom: '2023-07-10T22:35:56',
-    dateTo: '2023-07-11T11:22:12',
+    dateFrom: '2023-02-10T22:35:56',
+    dateTo: '2023-02-11T11:22:12',
   },
   {
     dateFrom: '2023-08-08T22:45:56',
@@ -65,7 +65,7 @@ const DATES = [
   },
   {
     dateFrom: '2023-07-11T10:25:57',
-    dateTo: '2019-07-12T11:22:13',
+    dateTo: '2023-07-12T11:22:13',
   },
 
 ];

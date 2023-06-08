@@ -10,6 +10,16 @@ const POINT_TYPES = [
   'restaurant'
 ];
 
+const DEFAULT_POINT = {
+  basePrice: '',
+  dateFrom: null,
+  dateTo: null,
+  destination: null,
+  isFavorite: false,
+  offers: [],
+  type: 'flight',
+};
+
 const SortType = {
   DAY: 'sort-day',
   PRICE: 'sort-price',
@@ -23,4 +33,16 @@ const FilterType = {
   PAST: 'past',
 };
 
-export { POINT_TYPES, SortType, FilterType };
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+export { POINT_TYPES, SortType, FilterType, UserAction, UpdateType, DEFAULT_POINT};

@@ -2,42 +2,93 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFullDate } from '../utils/point.js';
 import { getLastWord } from '../utils/utils.js';
 import flatpickr from 'flatpickr';
+import he from 'he';
+
 
 import 'flatpickr/dist/flatpickr.min.css';
 
 const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => {
   const {type, dateFrom, dateTo, basePrice} = tripPoint;
 
-  const destinationById = tripDestinations.find((tripDestination) => tripDestination.id === tripPoint.destination);
-
-  const {name, description, pictures} = destinationById;
-
-  const renderSelectedDestination = () => (
-    `<input class="event__input  event__input--destination"
-      id="event-destination-1"
-      type="text"
-      name="event-destination"
-      value="${name}"
-      list="destination-list-1">`
-  );
-
   const renderDestionationList = () => {
     let renderedDestinations = '';
+
     tripDestinations.forEach((tripDestination) => {
       const renderedDestination = `<option value="${tripDestination.name}"></option>`;
       renderedDestinations += renderedDestination;
     });
+
     return renderedDestinations;
   };
 
-  const getOffersByType = (point, offers) => {
-    const offersByType = offers.find((offer) => offer.type === point.type);
+  const getDestinationById = () => {
+    if (tripPoint.destination !== null) {
+      return tripDestinations.find((tripDestination) => tripDestination.id === tripPoint.destination);
+    }
+  };
+
+  const selectedDestination = getDestinationById();
+
+
+  const renderSelectedDestination = () => {
+    if (tripPoint.destination !== null) {
+      return (
+        `<input class="event__input  event__input--destination"
+      id="event-destination-1"
+      type="text"
+      name="event-destination"
+      value="${he.encode(`${selectedDestination.name}`)}"
+      list="destination-list-1">`
+      );
+    }
+    return (
+      `<input class="event__input  event__input--destination"
+    id="event-destination-1"
+    type="text"
+    name="event-destination"
+    value=""
+    list="destination-list-1">`
+    );
+  };
+
+  const renderPictures = () => {
+    let renderedPictures = '';
+    if (tripPoint.destination !== null) {
+      selectedDestination.pictures.forEach((picture) => {
+        const renderedPicture = `<img class="event__photo" src="${picture.src}" alt="${picture.description}"></img>`;
+        renderedPictures += renderedPicture;
+      });
+    }
+
+    return (renderedPictures === '') ? renderedPictures : (
+      `<div class="event__photos-container">
+        <div class="event__photos-tape">
+          ${renderedPictures}
+       </div>
+      </div>`
+    );
+  };
+
+  const renderDestionationDescription = () => {
+    if (tripPoint.destination === null) {
+      return '';
+    }
+    return (selectedDestination.description)
+      ? `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
+        <p class="event__destination-description">${selectedDestination.description}</p>`
+      : '';
+  };
+
+  const getOffersByType = () => {
+
+    const offersByType = tripOffers.find((offer) => offer.type === tripPoint.type);
     return offersByType.offers;
   };
 
-  const availableOffers = getOffersByType(tripPoint, tripOffers);
+  const availableOffers = getOffersByType();
 
   const renderAvailableOffers = () => {
+
     let renderedOffers = '';
 
     availableOffers.forEach((availableOffer) => {
@@ -58,44 +109,19 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
     return renderedOffers;
   };
 
-  const renderAvailableOffersContainer = () => (availableOffers.length)
-    ? `<section class="event__section  event__section--offers">
-        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-        <div class="event__available-offers">
-        ${renderAvailableOffers()}
-        </div>
-      </section>`
-    : '';
-
-  const renderPictures = () => {
-    let renderedPictures = '';
-
-    pictures.forEach((picture) => {
-      const renderedPicture = `<img class="event__photo" src="${picture.src}" alt="${picture.description}"></img>`;
-      renderedPictures += renderedPicture;
-    });
-
-    return renderedPictures;
-  };
-
-  const renderPicturesContainer = () => {
-    if (pictures.length) {
-
-      return (
-        `<div class="event__photos-container">
-          <div class="event__photos-tape">
-            ${renderPictures()}
-         </div>
-        </div>`
-      );
+  const renderAvailableOffersContainer = () => {
+    if (availableOffers === '') {
+      return '';
     }
+    return (
+      (availableOffers.length)
+        ? `<h3 class="event__section-title  event__section-title--offers">Offers</h3>
+          <div class="event__available-offers">
+          ${renderAvailableOffers()}
+          </div>`
+        : ''
+    );
   };
-
-  const renderDestionationDescriptionContainer = () => (description)
-    ? `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${description}</p>
-        ${renderPicturesContainer()}`
-    : '';
 
   return (
     `<li class="trip-events__item">
@@ -185,7 +211,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${he.encode(`${basePrice}`)}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -198,7 +224,8 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
         <section class="event__section  event__section--offers">
           ${renderAvailableOffersContainer()}
         </section>
-        ${renderDestionationDescriptionContainer()}
+        ${renderDestionationDescription()}
+        ${renderPictures()}
       </section>
     </form>
     </li>`
@@ -209,17 +236,19 @@ export default class EditPointFormView extends AbstractStatefulView {
   #tripOffers = null;
   #tripDestinations = null;
   #handleFormSubmit = null;
-  #handleEditClick = null;
+  #handleDeleteClick = null;
+  #handleEditCloseClick = null;
   #datepicker = null;
 
-  constructor({tripPoint, tripOffers, tripDestinations, onFormSubmit, onEditClick}) {
+  constructor({tripPoint, tripOffers, tripDestinations, onFormSubmit, onEditCloseClick, onDeleteClick}) {
     super();
 
-    this._setState(EditPointFormView.parsePointToState(tripPoint));
+    this._setState(EditPointFormView.parsePointToState({tripPoint}));
     this.#tripOffers = tripOffers;
     this.#tripDestinations = tripDestinations;
     this.#handleFormSubmit = onFormSubmit;
-    this.#handleEditClick = onEditClick;
+    this.#handleDeleteClick = onDeleteClick;
+    this.#handleEditCloseClick = onEditCloseClick;
 
     this._restoreHandlers();
   }
@@ -239,9 +268,15 @@ export default class EditPointFormView extends AbstractStatefulView {
 
   reset(point) {
     this.updateElement(
-      EditPointFormView.parsePointToState(point),
+      EditPointFormView.parsePointToState({tripPoint: point}),
     );
   }
+
+  #priceHandler = (evt) => {
+    const previousPrice = this._state.basePrice;
+    const price = Number(evt.target.value);
+    this.updateElement({ ...this._state, basePrice: !Number.isNaN(price) ? Math.round(price) : previousPrice});
+  };
 
   #dateFromChangeHandler = ([userDate]) => {
     this.updateElement({
@@ -261,7 +296,7 @@ export default class EditPointFormView extends AbstractStatefulView {
     this.#datepicker = flatpickr(
       this.element.querySelector('[name="event-start-time"]'),
       {
-        dateFormat: 'd/m/Y H:i',
+        dateFormat: 'd/m/y H:i',
         defaultDate: this._state.dateFrom,
         maxDate: this._state.dateTo,
         enableTime: true,
@@ -276,7 +311,7 @@ export default class EditPointFormView extends AbstractStatefulView {
     this.#datepicker = flatpickr(
       this.element.querySelector('[name="event-end-time"]'),
       {
-        dateFormat: 'd/m/Y H:i',
+        dateFormat: 'd/m/y H:i',
         defaultDate: this._state.dateTo,
         minDate: this._state.dateFrom,
         enableTime: true,
@@ -291,7 +326,7 @@ export default class EditPointFormView extends AbstractStatefulView {
       .addEventListener('submit', this.#formSubmitHandler);
 
     this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#editClickHandler);
+      .addEventListener('click', this.#editCloseClickHandler);
 
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#eventTypeChangeHandler);
@@ -301,6 +336,12 @@ export default class EditPointFormView extends AbstractStatefulView {
 
     this.element.querySelector('.event__input--destination')
       .addEventListener('change', this.#destinationChangeHandler);
+
+    this.element.querySelector('.event__reset-btn')
+      .addEventListener('click', this.#formDeleteClickHandler);
+
+    this.element.querySelector('.event__input--price')
+      .addEventListener('change', this.#priceHandler);
 
     this.#setDateFrom();
     this.#setDateTo();
@@ -344,22 +385,26 @@ export default class EditPointFormView extends AbstractStatefulView {
     });
   };
 
-
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this.#handleFormSubmit(EditPointFormView.parseStateToPoint(this._state));
   };
 
-  static parsePointToState(tripPoint) {
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(EditPointFormView.parseStateToPoint(this._state));
+  };
+
+  static parsePointToState({tripPoint}) {
     return {...tripPoint};
   }
 
   static parseStateToPoint(state) {
-    return state;
+    return {...state};
   }
 
-  #editClickHandler = (evt) => {
+  #editCloseClickHandler = (evt) => {
     evt.preventDefault();
-    this.#handleEditClick();
+    this.#handleEditCloseClick();
   };
 }

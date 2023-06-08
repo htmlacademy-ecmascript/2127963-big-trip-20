@@ -14,8 +14,4 @@ const getLastWord = (expression) => {
 
 };
 
-function updateItem(items, update) {
-  return items.map((item) => item.id === update.id ? update : item);
-}
-
-export { getRandomInteger, getRandomArrayElement, getLastWord, updateItem };
+export { getRandomInteger, getRandomArrayElement, getLastWord };
