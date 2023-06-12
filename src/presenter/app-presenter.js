@@ -1,6 +1,6 @@
 import SortingView from '../view/sorting-view.js';
 import EventsListView from '../view/events-list-view.js';
-import { render, remove } from '../framework/render.js';
+import { render, remove, RenderPosition } from '../framework/render.js';
 import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
 import { comparePrice, compareDuration } from '../utils/point.js';
@@ -8,6 +8,7 @@ import {filter} from '../utils/filter-util.js';
 import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import NoPointsView from '../view/no-points-view.js';
 import NewPointButtonView from '../view/new-point-button-view.js';
+import LoadingView from '../view/loading-view.js';
 
 export default class AppPresenter {
   #mainContainer = null;
@@ -21,11 +22,13 @@ export default class AppPresenter {
   #sortComponent = null;
   #noPointsComponent = null;
   #newPointButtonComponent = null;
+  #loadingComponent = new LoadingView();
 
   #pointPresenters = new Map();
   #newPointPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+  #isLoading = true;
 
   constructor({mainContainer, eventContainer, pointModel, offerModel, destinationModel, filterModel}) {
     this.#mainContainer = mainContainer;
@@ -56,6 +59,8 @@ export default class AppPresenter {
       onDestroy: handleNewPointFormClose,
     });
 
+    this.#destinationModel.addObserver(this.#handleModelEvent);
+    this.#offerModel.addObserver(this.#handleModelEvent);
     this.#pointModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
@@ -134,6 +139,12 @@ export default class AppPresenter {
         this.#clearBoard({resetSortType: true});
         this.#renderBoard();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#clearBoard();
+        this.#renderBoard();
+        break;
     }
   };
 
@@ -152,7 +163,7 @@ export default class AppPresenter {
       onSortTypeChange: this.#handleSortTypeChange
     });
 
-    render(this.#sortComponent, this.#eventContainer);
+    render(this.#sortComponent, this.#eventContainer, RenderPosition.AFTERBEGIN);
   }
 
   #renderEvents(points) {
@@ -164,17 +175,20 @@ export default class AppPresenter {
       filterType: this.#filterType
     });
 
-    render(this.#noPointsComponent, this.#eventListComponent.element);
+    render(this.#noPointsComponent, this.#eventContainer);
   }
 
   #renderEventList() {
     render(this.#eventListComponent, this.#eventContainer);
 
-    if (!this.points.length) {
-      this.#renderNoPoints();
-      return;
-    }
+
+    this.#renderSort();
     this.#renderEvents(this.points);
+
+  }
+
+  #renderLoading() {
+    render(this.#loadingComponent, this.#eventContainer);
   }
 
   #clearBoard({resetSortType = false} = {}) {
@@ -184,7 +198,7 @@ export default class AppPresenter {
     this.#pointPresenters.clear();
 
     remove(this.#sortComponent);
-    remove(this.#noPointsComponent);
+    remove(this.#loadingComponent);
 
     if (this.#noPointsComponent) {
       remove(this.#noPointsComponent);
@@ -197,7 +211,16 @@ export default class AppPresenter {
   }
 
   #renderBoard() {
-    this.#renderSort();
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
+    if (this.points.length === 0) {
+      this.#renderNoPoints();
+      return;
+    }
+
     this.#renderEventList();
   }
 }
