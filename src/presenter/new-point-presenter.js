@@ -1,6 +1,6 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
 import AddPointFormView from '../view/add-point-form-view.js';
-import {nanoid} from 'nanoid';
+//import {nanoid} from 'nanoid';
 import {UserAction, UpdateType} from '../const.js';
 
 export default class NewPointPresenter {
@@ -20,10 +20,13 @@ export default class NewPointPresenter {
     this.#handleDestroy = onDestroy;
   }
 
-  init() {
+  init(tripOffers, tripDestinations) {
     if (this.#eventAddComponent !== null) {
       return;
     }
+
+    this.#tripOffers = tripOffers;
+    this.#tripDestinations = tripDestinations;
 
     this.#eventAddComponent = new AddPointFormView({
       tripOffers: this.#tripOffers,
@@ -54,7 +57,8 @@ export default class NewPointPresenter {
     this.#handleDataChange(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {id: nanoid(), ...point},
+      point
+      //{id: nanoid(), ...point},
     );
     this.destroy();
   };

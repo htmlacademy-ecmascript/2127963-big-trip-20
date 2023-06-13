@@ -68,7 +68,7 @@ export default class AppPresenter {
   createPoint() {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this.#newPointPresenter.init();
+    this.#newPointPresenter.init(this.#offerModel.offers, this.#destinationModel.destinations);
   }
 
   get points() {

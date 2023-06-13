@@ -37,7 +37,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
       id="event-destination-1"
       type="text"
       name="event-destination"
-      value="${he.encode(`${selectedDestination.name}`)}"
+      value="${he.encode(`${selectedDestination?.name}`)}"
       list="destination-list-1">`
       );
     }
@@ -54,7 +54,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
   const renderPictures = () => {
     let renderedPictures = '';
     if (tripPoint.destination !== null) {
-      selectedDestination.pictures.forEach((picture) => {
+      selectedDestination?.pictures?.forEach((picture) => {
         const renderedPicture = `<img class="event__photo" src="${picture.src}" alt="${picture.description}"></img>`;
         renderedPictures += renderedPicture;
       });
@@ -73,16 +73,16 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
     if (tripPoint.destination === null) {
       return '';
     }
-    return (selectedDestination.description)
+    return (selectedDestination?.description)
       ? `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${selectedDestination.description}</p>`
+        <p class="event__destination-description">${selectedDestination?.description}</p>`
       : '';
   };
 
   const getOffersByType = () => {
 
     const offersByType = tripOffers.find((offer) => offer.type === tripPoint.type);
-    return offersByType.offers;
+    return offersByType?.offers;
   };
 
   const availableOffers = getOffersByType();
@@ -91,7 +91,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
 
     let renderedOffers = '';
 
-    availableOffers.forEach((availableOffer) => {
+    availableOffers?.forEach((availableOffer) => {
       const {id, title, price} = availableOffer;
 
       const renderedOffer = `
@@ -114,7 +114,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
       return '';
     }
     return (
-      (availableOffers.length)
+      (availableOffers?.length)
         ? `<h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
           ${renderAvailableOffers()}
