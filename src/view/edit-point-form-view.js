@@ -8,7 +8,15 @@ import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => {
-  const {type, dateFrom, dateTo, basePrice} = tripPoint;
+  const {
+    type,
+    dateFrom,
+    dateTo,
+    basePrice,
+    isDisabled,
+    isSaving,
+    isDeleting,
+  } = tripPoint;
 
   const renderDestionationList = () => {
     let renderedDestinations = '';
@@ -214,8 +222,8 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
           <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${he.encode(`${basePrice}`)}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+        <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
         </button>
@@ -396,11 +404,21 @@ export default class EditPointFormView extends AbstractStatefulView {
   };
 
   static parsePointToState({tripPoint}) {
-    return {...tripPoint};
+    return {...tripPoint,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    };
   }
 
   static parseStateToPoint(state) {
-    return {...state};
+    const point = {...state};
+
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+
+    return point;
   }
 
   #editCloseClickHandler = (evt) => {

@@ -53,6 +53,25 @@ export default class NewPointPresenter {
     document.removeEventListener('keydown', this.#escKeyDownHandler);
   }
 
+  setSaving() {
+    this.#eventAddComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#eventAddComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+      });
+    };
+
+    this.#eventAddComponent.shake(resetFormState);
+  }
+
+
   #handleFormSubmit = (point) => {
     this.#handleDataChange(
       UserAction.ADD_POINT,
@@ -60,7 +79,7 @@ export default class NewPointPresenter {
       point
       //{id: nanoid(), ...point},
     );
-    this.destroy();
+    //this.destroy();
   };
 
   #handleCancelClick = () => {

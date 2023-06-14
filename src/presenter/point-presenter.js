@@ -67,7 +67,9 @@ export default class PointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#eventEditComponent, previousEventEditComponent);
+      //replace(this.#eventEditComponent, previousEventEditComponent);
+      replace(this.#eventComponent, previousEventEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(previousEventComponent);
@@ -78,6 +80,24 @@ export default class PointPresenter {
     if (this.#mode !== Mode.DEFAULT) {
       this.#eventEditComponent.reset(this.#tripPoint);
       this.#replaceFormByPoint();
+    }
+  }
+
+  setSaving() {
+    if (this.#mode === Mode.EDITING) {
+      this.#eventEditComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.#eventEditComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
     }
   }
 
@@ -99,6 +119,23 @@ export default class PointPresenter {
     );
   };
 
+  setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#eventComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#eventEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#eventEditComponent.shake(resetFormState);
+  }
+
   #handleFormSubmit = (update) => {
     const isMinorUpdate =
     !areDatesEqual(this.#tripPoint.dateFrom, update.dateFrom);
@@ -108,7 +145,7 @@ export default class PointPresenter {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
-    this.#replaceFormByPoint();
+    //this.#replaceFormByPoint();
   };
 
   #handleDeleteClick = (point) => {
