@@ -8,7 +8,15 @@ import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => {
-  const {type, dateFrom, dateTo, basePrice} = tripPoint;
+  const {
+    type,
+    dateFrom,
+    dateTo,
+    basePrice,
+    isDisabled,
+    isSaving,
+    isDeleting,
+  } = tripPoint;
 
   const renderDestionationList = () => {
     let renderedDestinations = '';
@@ -37,7 +45,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
       id="event-destination-1"
       type="text"
       name="event-destination"
-      value="${he.encode(`${selectedDestination.name}`)}"
+      value="${he.encode(`${selectedDestination?.name}`)}"
       list="destination-list-1">`
       );
     }
@@ -54,7 +62,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
   const renderPictures = () => {
     let renderedPictures = '';
     if (tripPoint.destination !== null) {
-      selectedDestination.pictures.forEach((picture) => {
+      selectedDestination?.pictures?.forEach((picture) => {
         const renderedPicture = `<img class="event__photo" src="${picture.src}" alt="${picture.description}"></img>`;
         renderedPictures += renderedPicture;
       });
@@ -73,16 +81,16 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
     if (tripPoint.destination === null) {
       return '';
     }
-    return (selectedDestination.description)
+    return (selectedDestination?.description)
       ? `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${selectedDestination.description}</p>`
+        <p class="event__destination-description">${selectedDestination?.description}</p>`
       : '';
   };
 
   const getOffersByType = () => {
 
     const offersByType = tripOffers.find((offer) => offer.type === tripPoint.type);
-    return offersByType.offers;
+    return offersByType?.offers;
   };
 
   const availableOffers = getOffersByType();
@@ -91,7 +99,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
 
     let renderedOffers = '';
 
-    availableOffers.forEach((availableOffer) => {
+    availableOffers?.forEach((availableOffer) => {
       const {id, title, price} = availableOffer;
 
       const renderedOffer = `
@@ -114,7 +122,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
       return '';
     }
     return (
-      (availableOffers.length)
+      (availableOffers?.length)
         ? `<h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
           ${renderAvailableOffers()}
@@ -214,8 +222,8 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
           <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${he.encode(`${basePrice}`)}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+        <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
         </button>
@@ -396,11 +404,21 @@ export default class EditPointFormView extends AbstractStatefulView {
   };
 
   static parsePointToState({tripPoint}) {
-    return {...tripPoint};
+    return {...tripPoint,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    };
   }
 
   static parseStateToPoint(state) {
-    return {...state};
+    const point = {...state};
+
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+
+    return point;
   }
 
   #editCloseClickHandler = (evt) => {

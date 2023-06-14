@@ -8,18 +8,18 @@ const createEventTemplate = (tripPoint, tripOffers, tripDestinations) => {
   const destinationById = tripDestinations.find((tripDestination) => tripDestination?.id === tripPoint.destination);
 
   const getOffersByType = (point, offers) => {
-    const offersByType = offers.find((offer) => offer.type === point.type);
-    return offersByType.offers;
+    const offersByType = offers?.find((offer) => offer.type === point.type);
+    return offersByType?.offers;
   };
 
   const availableOffers = getOffersByType(tripPoint, tripOffers);
-  const checkedOffers = availableOffers.filter((offer) => tripPoint.offers.includes(offer.id));
+  const checkedOffers = availableOffers?.filter((offer) => tripPoint.offers.includes(offer.id));
 
   const renderSelectedOffers = () => {
     let selectedOffers = '';
 
 
-    checkedOffers.forEach((checkedOffer) => {
+    checkedOffers?.forEach((checkedOffer) => {
       const {title, price} = checkedOffer;
       const selectedOffer = `
         <li class="event__offer">

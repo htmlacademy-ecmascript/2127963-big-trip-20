@@ -8,8 +8,15 @@ import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
-const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => {
-  const {type, dateFrom, dateTo, basePrice} = tripPoint;
+const createAddPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => {
+  const {
+    type,
+    dateFrom,
+    dateTo,
+    basePrice,
+    isDisabled,
+    isSaving,
+  } = tripPoint;
 
   const renderDestionationList = () => {
     let renderedDestinations = '';
@@ -35,27 +42,27 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
     if (tripPoint.destination !== null) {
       return (
         `<input class="event__input  event__input--destination"
-      id="event-destination-1"
-      type="text"
-      name="event-destination"
-      value="${he.encode(`${selectedDestination.name}`)}"
-      list="destination-list-1">`
+         id="event-destination-1"
+         type="text"
+         name="event-destination"
+         value="${he.encode(`${selectedDestination?.name}`)}"
+         list="destination-list-1">`
       );
     }
     return (
       `<input class="event__input  event__input--destination"
-    id="event-destination-1"
-    type="text"
-    name="event-destination"
-    value=""
-    list="destination-list-1">`
+       id="event-destination-1"
+       type="text"
+       name="event-destination"
+       value=""
+       list="destination-list-1">`
     );
   };
 
   const renderPictures = () => {
     let renderedPictures = '';
     if (tripPoint.destination !== null) {
-      selectedDestination.pictures.forEach((picture) => {
+      selectedDestination?.pictures?.forEach((picture) => {
         const renderedPicture = `<img class="event__photo" src="${picture.src}" alt="${picture.description}"></img>`;
         renderedPictures += renderedPicture;
       });
@@ -74,15 +81,15 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
     if (tripPoint.destination === null) {
       return '';
     }
-    return (selectedDestination.description)
+    return (selectedDestination?.description)
       ? `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${selectedDestination.description}</p>`
+        <p class="event__destination-description">${selectedDestination?.description}</p>`
       : '';
   };
 
   const getOffersByType = () => {
     const offersByType = tripOffers.find((offer) => offer.type === tripPoint.type);
-    return offersByType.offers;
+    return offersByType?.offers;
   };
 
   const availableOffers = getOffersByType();
@@ -91,7 +98,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
 
     let renderedOffers = '';
 
-    availableOffers.forEach((availableOffer) => {
+    availableOffers?.forEach((availableOffer) => {
       const {id, title, price} = availableOffer;
 
       const renderedOffer = `
@@ -114,7 +121,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
       return '';
     }
     return (
-      (availableOffers.length)
+      (availableOffers?.length)
         ? `<h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
           ${renderAvailableOffers()}
@@ -190,12 +197,10 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
           <label class="event__label  event__type-output" for="event-destination-1">
             ${type}
           </label>
-
           ${renderSelectedDestination()}
           <datalist id="destination-list-1">
             ${renderDestionationList()}
           </datalist>
-
         </div>
 
         <div class="event__field-group  event__field-group--time">
@@ -214,10 +219,10 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
           <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${he.encode(`${basePrice}`)}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit"
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}
         ${tripPoint.dateFrom && tripPoint.dateTo && selectedDestination?.name && tripPoint.basePrice
       ? ''
-      : 'disabled'}>Save</button>
+      : 'disabled'}>${isSaving ? 'Saving...' : 'Save'}</button>
         <button class="event__reset-btn" type="reset">Cancel</button>
 
       </header>
@@ -253,7 +258,7 @@ export default class AddPointFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEditPointFormTemplate(this._state, this.#tripOffers, this.#tripDestinations);
+    return createAddPointFormTemplate(this._state, this.#tripOffers, this.#tripDestinations);
   }
 
   removeElement() {
@@ -393,11 +398,19 @@ export default class AddPointFormView extends AbstractStatefulView {
   };
 
   static parsePointToState({tripPoint}) {
-    return {...tripPoint};
+    return {...tripPoint,
+      isDisabled: false,
+      isSaving: false,
+    };
   }
 
   static parseStateToPoint(state) {
-    return {...state};
+    const point = {...state};
+
+    delete point.isDisabled;
+    delete point.isSaving;
+
+    return point;
   }
 
 }
