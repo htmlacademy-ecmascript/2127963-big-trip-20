@@ -121,7 +121,6 @@ export default class AppPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
-  //#handleViewAction = (actionType, updateType, update) => {
   #handleViewAction = async (actionType, updateType, update) => {
     this.#uiBlocker.block();
 
@@ -133,20 +132,19 @@ export default class AppPresenter {
         } catch(err) {
           this.#pointPresenters.get(update.id).setAborting();
         }
-        //this.#pointModel.updatePoint(updateType, update);
         break;
+
       case UserAction.ADD_POINT:
         this.#newPointPresenter.setSaving();
-        //this.#pointModel.addPoint(updateType, update);
         try {
           await this.#pointModel.addPoint(updateType, update);
         } catch(err) {
           this.#newPointPresenter.setAborting();
         }
         break;
+
       case UserAction.DELETE_POINT:
         this.#pointPresenters.get(update.id).setDeleting();
-        //this.#pointModel.deletePoint(updateType, update);
         try {
           await this.#pointModel.deletePoint(updateType, update);
         } catch(err) {
@@ -164,14 +162,17 @@ export default class AppPresenter {
       case UpdateType.PATCH:
         this.#pointPresenters.get(data.id).init(data);
         break;
+
       case UpdateType.MINOR:
         this.#clearBoard();
         this.#renderBoard();
         break;
+
       case UpdateType.MAJOR:
         this.#clearBoard({resetSortType: true});
         this.#renderBoard();
         break;
+
       case UpdateType.INIT:
         this.#isLoading = false;
         remove(this.#loadingComponent);
