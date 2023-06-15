@@ -21,9 +21,10 @@ export default class OfferModel extends Observable {
 
     } catch(err) {
       this.#offers = [];
-    }
+    } finally {
 
-    this._notify(UpdateType.MAJOR);
+      this._notify(UpdateType.MAJOR);
+    }
   }
 
 }
