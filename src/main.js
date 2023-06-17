@@ -6,7 +6,7 @@ import DestinationModel from './model/destination-model.js';
 import FilterModel from './model/filter-model.js';
 import PointsApiService from './points-api-service.js';
 
-const AUTHORIZATION = 'Basic lfffjs;fofsl;kdfjseayoew';
+const AUTHORIZATION = 'Basic lfffjs;fofsl;kdffsfjseayw';
 const END_POINT = 'https://20.ecmascript.pages.academy/big-trip';
 
 const tripMainElement = document.querySelector('.trip-main');
@@ -44,8 +44,7 @@ const filterPresenter = new FilterPresenter({
 
 destinationModel.init();
 offerModel.init();
+pointModel.init();
 
 filterPresenter.init();
 appPresenter.init();
-
-pointModel.init();

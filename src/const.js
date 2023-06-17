@@ -44,6 +44,9 @@ const UpdateType = {
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
   INIT: 'INIT',
+  DESTINATIONS: 'DESTINATIONS',
+  OFFERS:'OFFERS',
+  POINTS: 'POINTS',
 };
 
 export { POINT_TYPES, SortType, FilterType, UserAction, UpdateType, DEFAULT_POINT };
