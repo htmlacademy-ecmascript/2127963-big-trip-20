@@ -38,9 +38,9 @@ export default class AppPresenter {
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
   #infoPresenter = null;
-  #areDestinations = false;
-  #areOffers = false;
-  #arePoints = false;
+  #areDestinationsLoaded = false;
+  #areOffersLoaded = false;
+  #arePointsLoaded = false;
 
 
   #uiBlocker = new UiBlocker({
@@ -187,24 +187,24 @@ export default class AppPresenter {
         break;
 
       case UpdateType.DESTINATIONS:
-        this.#areDestinations = true;
+        this.#areDestinationsLoaded = true;
         break;
       case UpdateType.OFFERS:
-        this.#areOffers = true;
+        this.#areOffersLoaded = true;
         break;
       case UpdateType.POINTS:
-        this.#arePoints = true;
+        this.#arePointsLoaded = true;
         break;
 
       case UpdateType.INIT:
-        if (!this.#areDestinations || !this.#areOffers || !this.#arePoints) {
+        if (!this.#areDestinationsLoaded || !this.#areOffersLoaded || !this.#arePointsLoaded) {
           return;
         }
         this.#isLoading = false;
         remove(this.#loadingComponent);
         this.#clearBoard();
         this.#renderBoard();
-        this.#arePoints = false;
+        this.#arePointsLoaded = false;
 
         break;
     }
