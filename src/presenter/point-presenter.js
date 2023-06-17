@@ -2,7 +2,6 @@ import EditPointFormView from '../view/edit-point-form-view.js';
 import EventView from '../view/event-view.js';
 import { render, replace, remove } from '../framework/render.js';
 import {UserAction, UpdateType} from '../const.js';
-//import {areDatesEqual} from '../utils/point.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -16,22 +15,22 @@ export default class PointPresenter {
   #handleDataChange = null;
   #handleModeChange = null;
 
-  #tripPoint = null;
-  #tripOffers = null;
-  #tripDestinations = null;
+  #point = null;
+  #offers = null;
+  #destinations = null;
   #mode = Mode.DEFAULT;
 
 
-  constructor({eventListContainer, tripOffers, tripDestinations, onDataChange, onModeChange}) {
+  constructor({eventListContainer, offers, destinations, onDataChange, onModeChange}) {
     this.#eventListContainer = eventListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
-    this.#tripOffers = tripOffers;
-    this.#tripDestinations = tripDestinations;
+    this.#offers = offers;
+    this.#destinations = destinations;
   }
 
-  init(tripPoint) {
-    this.#tripPoint = tripPoint;
+  init(point) {
+    this.#point = point;
 
 
     const previousEventComponent = this.#eventComponent;
@@ -39,9 +38,9 @@ export default class PointPresenter {
 
 
     this.#eventComponent = new EventView({
-      tripPoint: this.#tripPoint,
-      tripOffers: this.#tripOffers,
-      tripDestinations: this.#tripDestinations,
+      point: this.#point,
+      offers: this.#offers,
+      destinations: this.#destinations,
       onEditClick: () => {
         this.#replacePointByForm();
       },
@@ -49,9 +48,9 @@ export default class PointPresenter {
     });
 
     this.#eventEditComponent = new EditPointFormView({
-      tripPoint: this.#tripPoint,
-      tripOffers: this.#tripOffers,
-      tripDestinations: this.#tripDestinations,
+      point: this.#point,
+      offers: this.#offers,
+      destinations: this.#destinations,
       onFormSubmit: this.#handleFormSubmit,
       onDeleteClick: this.#handleDeleteClick,
       onEditCloseClick: this.#hadleEditCloseClick
@@ -77,7 +76,7 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
-      this.#eventEditComponent.reset(this.#tripPoint);
+      this.#eventEditComponent.reset(this.#point);
       this.#replaceFormByPoint();
     }
   }
@@ -106,7 +105,7 @@ export default class PointPresenter {
   }
 
   #hadleEditCloseClick = () => {
-    this.#eventEditComponent.reset(this.#tripPoint);
+    this.#eventEditComponent.reset(this.#point);
     this.#replaceFormByPoint();
   };
 
@@ -114,7 +113,7 @@ export default class PointPresenter {
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
-      {...this.#tripPoint, isFavorite: !this.#tripPoint.isFavorite}
+      {...this.#point, isFavorite: !this.#point.isFavorite}
     );
   };
 
@@ -136,15 +135,9 @@ export default class PointPresenter {
   }
 
   #handleFormSubmit = (update) => {
-    /*const isMinorUpdate =
-    !areDatesEqual(this.#tripPoint.dateFrom, update.dateFrom);*/
-
-    //const isSamePrice
-    //const isSameTime
 
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
-      //isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       UpdateType.MINOR,
       update,
     );
@@ -161,7 +154,7 @@ export default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
-      this.#eventEditComponent.reset(this.#tripPoint);
+      this.#eventEditComponent.reset(this.#point);
       this.#replaceFormByPoint();
     }
   };

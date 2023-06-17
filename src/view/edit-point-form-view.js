@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { humanizeFullDate, getOffersByType, getDestinationById } from '../utils/point.js';
+import { humanizeFullDate, getOffersByType, getDestinationById, renderDestionationList } from '../utils/point.js';
 import { getLastWord } from '../utils/utils.js';
 import flatpickr from 'flatpickr';
 import he from 'he';
@@ -7,7 +7,7 @@ import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
-const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => {
+const createEditPointFormTemplate = (point, offers, destinations) => {
   const {
     type,
     dateFrom,
@@ -16,36 +16,12 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
     isDisabled,
     isSaving,
     isDeleting,
-  } = tripPoint;
+  } = point;
 
-  const renderDestionationList = () => {
-    let renderedDestinations = '';
-
-    tripDestinations.forEach((tripDestination) => {
-      const renderedDestination = `<option value="${tripDestination.name}"></option>`;
-      renderedDestinations += renderedDestination;
-    });
-
-    return renderedDestinations;
-  };
-
-  /*const getDestinationById = () => {
-    if (tripPoint.destination !== null) {
-      return tripDestinations.find((tripDestination) => tripDestination.id === tripPoint.destination);
-    }
-  };*/
-
-  //const getDestinationById = () =>
-  //if (tripPoint.destination !== null) {
-  //tripDestinations.find((tripDestination) => tripDestination.id === tripPoint.destination);
-  //}
-
-
-  const selectedDestination = getDestinationById(tripPoint, tripDestinations);
-
+  const selectedDestination = getDestinationById(point, destinations);
 
   const renderSelectedDestination = () => {
-    if (tripPoint.destination !== null) {
+    if (point.destination !== null) {
       return (
         `<input class="event__input  event__input--destination"
         id="event-destination-1"
@@ -67,7 +43,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
 
   const renderPictures = () => {
     let renderedPictures = '';
-    if (tripPoint.destination !== null) {
+    if (point.destination !== null) {
       selectedDestination?.pictures?.forEach((picture) => {
         const renderedPicture = `<img class="event__photo" src="${picture.src}" alt="${picture.description}"></img>`;
         renderedPictures += renderedPicture;
@@ -84,7 +60,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
   };
 
   const renderDestionationDescription = () => {
-    if (tripPoint.destination === null) {
+    if (point.destination === null) {
       return '';
     }
     return (selectedDestination?.description)
@@ -93,13 +69,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
       : '';
   };
 
-  /*const getOffersByType = () => {
-
-    const offersByType = tripOffers.find((offer) => offer.type === tripPoint.type);
-    return offersByType?.offers;
-  };*/
-
-  const availableOffers = getOffersByType(tripPoint, tripOffers);
+  const availableOffers = getOffersByType(point, offers);
 
   const renderAvailableOffers = () => {
 
@@ -110,7 +80,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
 
       const renderedOffer = `
        <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" data-offer-id="${id}" id="event-offer-${getLastWord(title)}-${id}" type="checkbox" name="event-offer-${getLastWord(title)}" ${tripPoint.offers.includes(id) ? 'checked' : ''}>
+          <input class="event__offer-checkbox  visually-hidden" data-offer-id="${id}" id="event-offer-${getLastWord(title)}-${id}" type="checkbox" name="event-offer-${getLastWord(title)}" ${point.offers.includes(id) ? 'checked' : ''}>
           <label class="event__offer-label" for="event-offer-${getLastWord(title)}-${id}">
             <span class="event__offer-title">${title}</span>
             &plus;&euro;&nbsp;
@@ -144,7 +114,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -207,7 +177,7 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
 
           ${renderSelectedDestination()}
           <datalist id="destination-list-1">
-            ${renderDestionationList()}
+            ${renderDestionationList(destinations)}
           </datalist>
 
         </div>
@@ -247,19 +217,19 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
 };
 
 export default class EditPointFormView extends AbstractStatefulView {
-  #tripOffers = null;
-  #tripDestinations = null;
+  #offers = null;
+  #destinations = null;
   #handleFormSubmit = null;
   #handleDeleteClick = null;
   #handleEditCloseClick = null;
   #datepicker = null;
 
-  constructor({tripPoint, tripOffers, tripDestinations, onFormSubmit, onEditCloseClick, onDeleteClick}) {
+  constructor({point, offers, destinations, onFormSubmit, onEditCloseClick, onDeleteClick}) {
     super();
 
-    this._setState(EditPointFormView.parsePointToState({tripPoint}));
-    this.#tripOffers = tripOffers;
-    this.#tripDestinations = tripDestinations;
+    this._setState(EditPointFormView.parsePointToState({point}));
+    this.#offers = offers;
+    this.#destinations = destinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleDeleteClick = onDeleteClick;
     this.#handleEditCloseClick = onEditCloseClick;
@@ -268,7 +238,7 @@ export default class EditPointFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEditPointFormTemplate(this._state, this.#tripOffers, this.#tripDestinations);
+    return createEditPointFormTemplate(this._state, this.#offers, this.#destinations);
   }
 
   removeElement() {
@@ -282,7 +252,7 @@ export default class EditPointFormView extends AbstractStatefulView {
 
   reset(point) {
     this.updateElement(
-      EditPointFormView.parsePointToState({tripPoint: point}),
+      EditPointFormView.parsePointToState({point: point}),
     );
   }
 
@@ -389,7 +359,7 @@ export default class EditPointFormView extends AbstractStatefulView {
       return;
     }
 
-    const updatedDestination = this.#tripDestinations.find((tripDestination) => tripDestination.name === evt.target.value);
+    const updatedDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
 
     const updatedDestinationId = (updatedDestination) ? updatedDestination.id : null;
 
@@ -409,8 +379,8 @@ export default class EditPointFormView extends AbstractStatefulView {
     this.#handleDeleteClick(EditPointFormView.parseStateToPoint(this._state));
   };
 
-  static parsePointToState({tripPoint}) {
-    return {...tripPoint,
+  static parsePointToState({point}) {
+    return {...point,
       isDisabled: false,
       isSaving: false,
       isDeleting: false,

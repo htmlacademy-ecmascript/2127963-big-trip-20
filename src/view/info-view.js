@@ -4,9 +4,6 @@ import { humanizeDate } from '../utils/point.js';
 
 
 const createInfoTemplate = (points, destinations, offers) => {
-  /*points.forEach((point) => {
-    const {dateFrom, dateTo, basePrice} = point;
-  });*/
   let totalPrice = 0;
 
   points.forEach((point) => {
@@ -38,10 +35,7 @@ const createInfoTemplate = (points, destinations, offers) => {
       const infoDestination = getDestinationById(points[i], destinations).name;
       infoDestinations.push(infoDestination);
     }
-    /*points.forEach((point) => {
-      const infoDestination = getDestinationById(point, destinations).name;
-      infoDestinations.push(infoDestination);
-    });*/
+
     return (
       `<h1 class="trip-info__title">
         ${infoDestinations.join(' &mdash; ')}

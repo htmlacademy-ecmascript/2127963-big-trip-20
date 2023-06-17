@@ -10,7 +10,6 @@ import NoPointsView from '../view/no-points-view.js';
 import NewPointButtonView from '../view/new-point-button-view.js';
 import LoadingView from '../view/loading-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
-//import InfoView from '../view/info-view.js';
 import InfoPresenter from './info-presenter.js';
 import { compareDates } from '../utils/point.js';
 
@@ -31,7 +30,6 @@ export default class AppPresenter {
   #sortComponent = null;
   #noPointsComponent = null;
   #newPointButtonComponent = null;
-  //#infoComponent = null;
   #loadingComponent = new LoadingView();
 
   #pointPresenters = new Map();
@@ -71,22 +69,12 @@ export default class AppPresenter {
       onClick: handleNewPointButtonClick,
     });
 
-    /*this.#infoComponent = new InfoView ({
-      points: this.points,
-      destinations: this.#destinationModel.destinations
-    });*/
-
     this.#infoPresenter = new InfoPresenter ({
       infoContainer: this.#mainContainer,
-      //points: this.#pointModel.points,
-      //destinations: this.#destinationModel.destinations
-
     });
 
     this.#newPointPresenter = new NewPointPresenter({
       eventListContainer: this.#eventListComponent.element,
-      /*tripOffers: this.#offerModel.offers,
-      tripDestinations: this.#destinationModel.destinations,*/
       onDataChange: this.#handleViewAction,
       onDestroy: handleNewPointFormClose,
     });
@@ -117,33 +105,21 @@ export default class AppPresenter {
     return filteredPoints;
   }
 
-  /*#renderInfo () {
-    render(this.#infoComponent, this.#mainContainer, RenderPosition.AFTERBEGIN);
-  }*/
-
   #renderInfo() {
     const points = this.#pointModel.points.sort((a, b) => compareDates(a.dateFrom, b.dateFrom));
     this.#infoPresenter.init(points, this.#destinationModel.destinations, this.#offerModel.offers);
-
   }
 
   init() {
     this.#renderBoard();
-    //this.#renderInfo();
-
-
-    //render(this.#newPointButtonComponent, this.#mainContainer);
-    //this.#renderInfo();
-
-
   }
 
-  #renderTripPoint(point) {
+  #renderPoint(point) {
     const pointPresenter = new PointPresenter({
       eventListContainer: this.#eventListComponent.element,
 
-      tripOffers: this.#offerModel.offers,
-      tripDestinations: this.#destinationModel.destinations,
+      offers: this.#offerModel.offers,
+      destinations: this.#destinationModel.destinations,
 
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange
@@ -253,7 +229,7 @@ export default class AppPresenter {
   }
 
   #renderEvents(points) {
-    points.forEach((point) => this.#renderTripPoint(point));
+    points.forEach((point) => this.#renderPoint(point));
   }
 
   #renderNoPoints() {

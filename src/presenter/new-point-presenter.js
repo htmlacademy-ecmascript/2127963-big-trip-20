@@ -4,32 +4,30 @@ import {UserAction, UpdateType} from '../const.js';
 
 export default class NewPointPresenter {
   #eventListContainer = null;
-  #tripOffers = null;
-  #tripDestinations = null;
+  #offers = null;
+  #destinations = null;
   #handleDataChange = null;
   #handleDestroy = null;
 
   #eventAddComponent = null;
 
-  constructor({eventListContainer/*, tripOffers, tripDestinations*/, onDataChange, onDestroy}) {
+  constructor({eventListContainer, onDataChange, onDestroy}) {
     this.#eventListContainer = eventListContainer;
-    /*this.#tripOffers = tripOffers;
-    this.#tripDestinations = tripDestinations;*/
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
   }
 
-  init(tripOffers, tripDestinations) {
+  init(offers, destinations) {
     if (this.#eventAddComponent !== null) {
       return;
     }
 
-    this.#tripOffers = tripOffers;
-    this.#tripDestinations = tripDestinations;
+    this.#offers = offers;
+    this.#destinations = destinations;
 
     this.#eventAddComponent = new AddPointFormView({
-      tripOffers: this.#tripOffers,
-      tripDestinations: this.#tripDestinations,
+      offers: this.#offers,
+      destinations: this.#destinations,
       onFormSubmit: this.#handleFormSubmit,
       onCancelClick: this.#handleCancelClick
     });

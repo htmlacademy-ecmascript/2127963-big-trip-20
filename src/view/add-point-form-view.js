@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { humanizeFullDate, getOffersByType, getDestinationById } from '../utils/point.js';
+import { humanizeFullDate, getOffersByType, getDestinationById, renderDestionationList } from '../utils/point.js';
 import { getLastWord } from '../utils/utils.js';
 import { DEFAULT_POINT } from '../const.js';
 import flatpickr from 'flatpickr';
@@ -8,7 +8,7 @@ import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
-const createAddPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => {
+const createAddPointFormTemplate = (point, offers, destinations) => {
   const {
     type,
     dateFrom,
@@ -16,31 +16,12 @@ const createAddPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => 
     basePrice,
     isDisabled,
     isSaving,
-  } = tripPoint;
+  } = point;
 
-  const renderDestionationList = () => {
-    let renderedDestinations = '';
-
-    tripDestinations.forEach((tripDestination) => {
-      const renderedDestination = `<option value="${tripDestination.name}"></option>`;
-      renderedDestinations += renderedDestination;
-    });
-
-    return renderedDestinations;
-  };
-
-  /*const getDestinationById = () => {
-    if (tripPoint.destination !== null) {
-      return tripDestinations.find((tripDestination) => tripDestination.id === tripPoint.destination);
-    }
-  };*/
-
-  //const selectedDestination = getDestinationById();
-  const selectedDestination = getDestinationById(tripPoint, tripDestinations);
-
+  const selectedDestination = getDestinationById(point, destinations);
 
   const renderSelectedDestination = () => {
-    if (tripPoint.destination !== null) {
+    if (point.destination !== null) {
       return (
         `<input class="event__input  event__input--destination"
          id="event-destination-1"
@@ -62,7 +43,7 @@ const createAddPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => 
 
   const renderPictures = () => {
     let renderedPictures = '';
-    if (tripPoint.destination !== null) {
+    if (point.destination !== null) {
       selectedDestination?.pictures?.forEach((picture) => {
         const renderedPicture = `<img class="event__photo" src="${picture.src}" alt="${picture.description}"></img>`;
         renderedPictures += renderedPicture;
@@ -79,7 +60,7 @@ const createAddPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => 
   };
 
   const renderDestionationDescription = () => {
-    if (tripPoint.destination === null) {
+    if (point.destination === null) {
       return '';
     }
     return (selectedDestination?.description)
@@ -88,17 +69,9 @@ const createAddPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => 
       : '';
   };
 
-  /*const getOffersByType = () => {
-    const offersByType = tripOffers.find((offer) => offer.type === tripPoint.type);
-    return offersByType?.offers;
-  };*/
-
-  const availableOffers = getOffersByType(tripPoint, tripOffers);
-
-  //const availableOffers = getOffersByType();
+  const availableOffers = getOffersByType(point, offers);
 
   const renderAvailableOffers = () => {
-
     let renderedOffers = '';
 
     availableOffers?.forEach((availableOffer) => {
@@ -106,7 +79,7 @@ const createAddPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => 
 
       const renderedOffer = `
        <div class="event__offer-selector">
-          <input class="event__offer-checkbox  visually-hidden" data-offer-id="${id}" id="event-offer-${getLastWord(title)}-${id}" type="checkbox" name="event-offer-${getLastWord(title)}" ${tripPoint.offers.includes(id) ? 'checked' : ''}>
+          <input class="event__offer-checkbox  visually-hidden" data-offer-id="${id}" id="event-offer-${getLastWord(title)}-${id}" type="checkbox" name="event-offer-${getLastWord(title)}" ${point.offers.includes(id) ? 'checked' : ''}>
           <label class="event__offer-label" for="event-offer-${getLastWord(title)}-${id}">
             <span class="event__offer-title">${title}</span>
             &plus;&euro;&nbsp;
@@ -140,7 +113,7 @@ const createAddPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => 
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -202,7 +175,7 @@ const createAddPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => 
           </label>
           ${renderSelectedDestination()}
           <datalist id="destination-list-1">
-            ${renderDestionationList()}
+            ${renderDestionationList(destinations)}
           </datalist>
         </div>
 
@@ -223,7 +196,7 @@ const createAddPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => 
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}
-        ${tripPoint.dateFrom && tripPoint.dateTo && selectedDestination?.name && tripPoint.basePrice
+        ${point.dateFrom && point.dateTo && selectedDestination?.name && point.basePrice
       ? ''
       : 'disabled'}>${isSaving ? 'Saving...' : 'Save'}</button>
         <button class="event__reset-btn" type="reset">Cancel</button>
@@ -242,18 +215,18 @@ const createAddPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => 
 };
 
 export default class AddPointFormView extends AbstractStatefulView {
-  #tripOffers = null;
-  #tripDestinations = null;
+  #offers = null;
+  #destinations = null;
   #handleFormSubmit = null;
   #handleCancelClick = null;
   #datepicker = null;
 
-  constructor({tripPoint = DEFAULT_POINT , tripOffers, tripDestinations, onFormSubmit, onCancelClick}) {
+  constructor({point = DEFAULT_POINT , offers, destinations, onFormSubmit, onCancelClick}) {
     super();
 
-    this._setState(AddPointFormView.parsePointToState({tripPoint}));
-    this.#tripOffers = tripOffers;
-    this.#tripDestinations = tripDestinations;
+    this._setState(AddPointFormView.parsePointToState({point}));
+    this.#offers = offers;
+    this.#destinations = destinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleCancelClick = onCancelClick;
 
@@ -261,7 +234,7 @@ export default class AddPointFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createAddPointFormTemplate(this._state, this.#tripOffers, this.#tripDestinations);
+    return createAddPointFormTemplate(this._state, this.#offers, this.#destinations);
   }
 
   removeElement() {
@@ -379,7 +352,7 @@ export default class AddPointFormView extends AbstractStatefulView {
       return;
     }
 
-    const updatedDestination = this.#tripDestinations.find((tripDestination) => tripDestination.name === evt.target.value);
+    const updatedDestination = this.#destinations.find((destination) => destination.name === evt.target.value);
 
     const updatedDestinationId = (updatedDestination) ? updatedDestination.id : null;
 
@@ -400,8 +373,8 @@ export default class AddPointFormView extends AbstractStatefulView {
     this.#handleCancelClick(AddPointFormView.parseStateToPoint(this._state));
   };
 
-  static parsePointToState({tripPoint}) {
-    return {...tripPoint,
+  static parsePointToState({point}) {
+    return {...point,
       isDisabled: false,
       isSaving: false,
     };
@@ -415,5 +388,4 @@ export default class AddPointFormView extends AbstractStatefulView {
 
     return point;
   }
-
 }

@@ -8,12 +8,8 @@ export default class InfoPresenter {
   #destinations = null;
   #offers = null;
 
-  constructor ({infoContainer/*, points, destinations, offers*/}) {
+  constructor ({infoContainer}) {
     this.#infoContainer = infoContainer;
-    //this.#points = points;
-    //this.#destinations = destinations;
-    //this.#offers = offers;
-
   }
 
   init(points, destinations, offers) {

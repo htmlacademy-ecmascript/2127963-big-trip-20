@@ -42,14 +42,9 @@ const filterPresenter = new FilterPresenter({
   pointModel
 });
 
-//const modelInit = () => {
-
 destinationModel.init();
 offerModel.init();
 pointModel.init();
-//};
-
-//modelInit();
 
 filterPresenter.init();
 appPresenter.init();
