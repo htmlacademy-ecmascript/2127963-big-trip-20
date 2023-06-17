@@ -1,23 +1,25 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeDate, humanizeTime, getDuration } from '../utils/point.js';
+import { humanizeDate, humanizeTime, getDuration, getOffersByType, getDestinationById } from '../utils/point.js';
 import he from 'he';
 
 const createEventTemplate = (tripPoint, tripOffers, tripDestinations) => {
 
   const {type, dateFrom, dateTo, basePrice, isFavorite} = tripPoint;
-  const destinationById = tripDestinations.find((tripDestination) => tripDestination?.id === tripPoint.destination);
+  //const destinationById = tripDestinations.find((tripDestination) => tripDestination.id === tripPoint.destination);
 
-  const getOffersByType = (point, offers) => {
-    const offersByType = offers?.find((offer) => offer.type === point.type);
+  const destinationById = getDestinationById(tripPoint, tripDestinations);
+
+
+  /*const getOffersByType = (point, offers) => {
+    const offersByType = offers.find((offer) => offer.type === point.type);
     return offersByType?.offers;
-  };
+  };*/
 
   const availableOffers = getOffersByType(tripPoint, tripOffers);
   const checkedOffers = availableOffers?.filter((offer) => tripPoint.offers.includes(offer.id));
 
   const renderSelectedOffers = () => {
     let selectedOffers = '';
-
 
     checkedOffers?.forEach((checkedOffer) => {
       const {title, price} = checkedOffer;

@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { humanizeFullDate } from '../utils/point.js';
+import { humanizeFullDate, getOffersByType, getDestinationById } from '../utils/point.js';
 import { getLastWord } from '../utils/utils.js';
 import flatpickr from 'flatpickr';
 import he from 'he';
@@ -29,33 +29,39 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
     return renderedDestinations;
   };
 
-  const getDestinationById = () => {
+  /*const getDestinationById = () => {
     if (tripPoint.destination !== null) {
       return tripDestinations.find((tripDestination) => tripDestination.id === tripPoint.destination);
     }
-  };
+  };*/
 
-  const selectedDestination = getDestinationById();
+  //const getDestinationById = () =>
+  //if (tripPoint.destination !== null) {
+  //tripDestinations.find((tripDestination) => tripDestination.id === tripPoint.destination);
+  //}
+
+
+  const selectedDestination = getDestinationById(tripPoint, tripDestinations);
 
 
   const renderSelectedDestination = () => {
     if (tripPoint.destination !== null) {
       return (
         `<input class="event__input  event__input--destination"
-      id="event-destination-1"
-      type="text"
-      name="event-destination"
-      value="${he.encode(`${selectedDestination?.name}`)}"
-      list="destination-list-1">`
+        id="event-destination-1"
+        type="text"
+        name="event-destination"
+        value="${he.encode(`${selectedDestination?.name}`)}"
+        list="destination-list-1">`
       );
     }
     return (
       `<input class="event__input  event__input--destination"
-    id="event-destination-1"
-    type="text"
-    name="event-destination"
-    value=""
-    list="destination-list-1">`
+      id="event-destination-1"
+      type="text"
+      name="event-destination"
+      value=""
+      list="destination-list-1">`
     );
   };
 
@@ -87,13 +93,13 @@ const createEditPointFormTemplate = (tripPoint, tripOffers, tripDestinations) =>
       : '';
   };
 
-  const getOffersByType = () => {
+  /*const getOffersByType = () => {
 
     const offersByType = tripOffers.find((offer) => offer.type === tripPoint.type);
     return offersByType?.offers;
-  };
+  };*/
 
-  const availableOffers = getOffersByType();
+  const availableOffers = getOffersByType(tripPoint, tripOffers);
 
   const renderAvailableOffers = () => {
 

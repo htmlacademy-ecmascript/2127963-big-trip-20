@@ -2,7 +2,7 @@ import EditPointFormView from '../view/edit-point-form-view.js';
 import EventView from '../view/event-view.js';
 import { render, replace, remove } from '../framework/render.js';
 import {UserAction, UpdateType} from '../const.js';
-import {areDatesEqual} from '../utils/point.js';
+//import {areDatesEqual} from '../utils/point.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -136,12 +136,16 @@ export default class PointPresenter {
   }
 
   #handleFormSubmit = (update) => {
-    const isMinorUpdate =
-    !areDatesEqual(this.#tripPoint.dateFrom, update.dateFrom);
+    /*const isMinorUpdate =
+    !areDatesEqual(this.#tripPoint.dateFrom, update.dateFrom);*/
+
+    //const isSamePrice
+    //const isSameTime
 
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
-      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      //isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      UpdateType.MINOR,
       update,
     );
   };

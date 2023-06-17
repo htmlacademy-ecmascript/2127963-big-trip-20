@@ -10,6 +10,9 @@ import NoPointsView from '../view/no-points-view.js';
 import NewPointButtonView from '../view/new-point-button-view.js';
 import LoadingView from '../view/loading-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+//import InfoView from '../view/info-view.js';
+import InfoPresenter from './info-presenter.js';
+import { compareDates } from '../utils/point.js';
 
 const TimeLimit = {
   LOWER_LIMIT: 350,
@@ -28,6 +31,7 @@ export default class AppPresenter {
   #sortComponent = null;
   #noPointsComponent = null;
   #newPointButtonComponent = null;
+  //#infoComponent = null;
   #loadingComponent = new LoadingView();
 
   #pointPresenters = new Map();
@@ -35,6 +39,11 @@ export default class AppPresenter {
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
+  #infoPresenter = null;
+  #areDestinations = false;
+  #areOffers = false;
+  #arePoints = false;
+
 
   #uiBlocker = new UiBlocker({
     lowerLimit: TimeLimit.LOWER_LIMIT,
@@ -62,10 +71,22 @@ export default class AppPresenter {
       onClick: handleNewPointButtonClick,
     });
 
+    /*this.#infoComponent = new InfoView ({
+      points: this.points,
+      destinations: this.#destinationModel.destinations
+    });*/
+
+    this.#infoPresenter = new InfoPresenter ({
+      infoContainer: this.#mainContainer,
+      //points: this.#pointModel.points,
+      //destinations: this.#destinationModel.destinations
+
+    });
+
     this.#newPointPresenter = new NewPointPresenter({
       eventListContainer: this.#eventListComponent.element,
-      tripOffers: this.#offerModel.offers,
-      tripDestinations: this.#destinationModel.destinations,
+      /*tripOffers: this.#offerModel.offers,
+      tripDestinations: this.#destinationModel.destinations,*/
       onDataChange: this.#handleViewAction,
       onDestroy: handleNewPointFormClose,
     });
@@ -96,9 +117,25 @@ export default class AppPresenter {
     return filteredPoints;
   }
 
+  /*#renderInfo () {
+    render(this.#infoComponent, this.#mainContainer, RenderPosition.AFTERBEGIN);
+  }*/
+
+  #renderInfo() {
+    const points = this.#pointModel.points.sort((a, b) => compareDates(a.dateFrom, b.dateFrom));
+    this.#infoPresenter.init(points, this.#destinationModel.destinations, this.#offerModel.offers);
+
+  }
+
   init() {
     this.#renderBoard();
-    render(this.#newPointButtonComponent, this.#mainContainer);
+    //this.#renderInfo();
+
+
+    //render(this.#newPointButtonComponent, this.#mainContainer);
+    //this.#renderInfo();
+
+
   }
 
   #renderTripPoint(point) {
@@ -173,11 +210,26 @@ export default class AppPresenter {
         this.#renderBoard();
         break;
 
+      case UpdateType.DESTINATIONS:
+        this.#areDestinations = true;
+        break;
+      case UpdateType.OFFERS:
+        this.#areOffers = true;
+        break;
+      case UpdateType.POINTS:
+        this.#arePoints = true;
+        break;
+
       case UpdateType.INIT:
+        if (!this.#areDestinations || !this.#areOffers || !this.#arePoints) {
+          return;
+        }
         this.#isLoading = false;
         remove(this.#loadingComponent);
         this.#clearBoard();
         this.#renderBoard();
+        this.#arePoints = false;
+
         break;
     }
   };
@@ -256,5 +308,8 @@ export default class AppPresenter {
     }
 
     this.#renderEventList();
+    this.#renderInfo();
+    render(this.#newPointButtonComponent, this.#mainContainer);
+
   }
 }

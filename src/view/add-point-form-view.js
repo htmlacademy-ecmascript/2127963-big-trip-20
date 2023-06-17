@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { humanizeFullDate } from '../utils/point.js';
+import { humanizeFullDate, getOffersByType, getDestinationById } from '../utils/point.js';
 import { getLastWord } from '../utils/utils.js';
 import { DEFAULT_POINT } from '../const.js';
 import flatpickr from 'flatpickr';
@@ -29,13 +29,14 @@ const createAddPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => 
     return renderedDestinations;
   };
 
-  const getDestinationById = () => {
+  /*const getDestinationById = () => {
     if (tripPoint.destination !== null) {
       return tripDestinations.find((tripDestination) => tripDestination.id === tripPoint.destination);
     }
-  };
+  };*/
 
-  const selectedDestination = getDestinationById();
+  //const selectedDestination = getDestinationById();
+  const selectedDestination = getDestinationById(tripPoint, tripDestinations);
 
 
   const renderSelectedDestination = () => {
@@ -87,12 +88,14 @@ const createAddPointFormTemplate = (tripPoint, tripOffers, tripDestinations) => 
       : '';
   };
 
-  const getOffersByType = () => {
+  /*const getOffersByType = () => {
     const offersByType = tripOffers.find((offer) => offer.type === tripPoint.type);
     return offersByType?.offers;
-  };
+  };*/
 
-  const availableOffers = getOffersByType();
+  const availableOffers = getOffersByType(tripPoint, tripOffers);
+
+  //const availableOffers = getOffersByType();
 
   const renderAvailableOffers = () => {
 

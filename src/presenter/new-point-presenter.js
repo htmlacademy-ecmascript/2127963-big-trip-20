@@ -11,10 +11,10 @@ export default class NewPointPresenter {
 
   #eventAddComponent = null;
 
-  constructor({eventListContainer, tripOffers, tripDestinations, onDataChange, onDestroy}) {
+  constructor({eventListContainer/*, tripOffers, tripDestinations*/, onDataChange, onDestroy}) {
     this.#eventListContainer = eventListContainer;
-    this.#tripOffers = tripOffers;
-    this.#tripDestinations = tripDestinations;
+    /*this.#tripOffers = tripOffers;
+    this.#tripDestinations = tripDestinations;*/
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
   }

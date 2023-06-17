@@ -69,5 +69,21 @@ const areDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || da
 
 const comparePrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
 
+const getDestinationById = (point, destinations) =>
+  //if (point.destination !== null) {
+  destinations.find((destination) => destination.id === point.destination);
+  //}
 
-export { comparePrice, compareDuration, humanizeDate, humanizeFullDate, humanizeTime, getDuration, getTimeDifference, isDateInPast, isDateInFUture, isSameDate, compareDates, areDatesEqual };
+/*const getDestinationById = (point, destinations) => {
+  if (point.destination !== null) {
+    return destinations.find((destination) => destination.id === point.destination);
+  }
+};*/
+
+const getOffersByType = (point, offers) => {
+  const offersByType = offers.find((offer) => offer.type === point.type);
+  return offersByType?.offers;
+};
+
+
+export { comparePrice, compareDuration, humanizeDate, humanizeFullDate, humanizeTime, getDuration, getTimeDifference, isDateInPast, isDateInFUture, isSameDate, compareDates, areDatesEqual, getDestinationById, getOffersByType };

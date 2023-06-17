@@ -23,7 +23,8 @@ export default class DestinationModel extends Observable {
       this.#destinations = [];
     } finally {
 
-      this._notify(UpdateType.MAJOR);
+      this._notify(UpdateType.DESTINATIONS);
+      this._notify(UpdateType.INIT);
     }
   }
 

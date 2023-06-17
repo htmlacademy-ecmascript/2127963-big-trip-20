@@ -24,6 +24,7 @@ export default class PointModel extends Observable {
       this.#points = [];
     } finally {
 
+      this._notify(UpdateType.POINTS);
       this._notify(UpdateType.INIT);
     }
   }
