@@ -1,6 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeFullDate, getOffersByType, getDestinationById, renderDestionationList, isTypeChecked } from '../utils/point.js';
-import { getLastWord } from '../utils/utils.js';
+import { getLastWord, capitalizeFirstLetter } from '../utils/utils.js';
+import { POINT_TYPES } from '../const.js';
 import flatpickr from 'flatpickr';
 import he from 'he';
 
@@ -107,6 +108,19 @@ const createEditPointFormTemplate = (point, offers, destinations) => {
     );
   };
 
+  const renderEventTypeList = () => {
+    let typeList = '';
+    POINT_TYPES.forEach((pointType) => {
+      const typeItem =
+      `<div class="event__type-item">
+        <input id="event-type-${pointType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${pointType}" ${isTypeChecked(pointType, type)}>
+        <label class="event__type-label  event__type-label--${pointType}" for="event-type-${pointType}-1">${capitalizeFirstLetter(pointType)}</label>
+      </div>`;
+      typeList += typeItem;
+    });
+    return typeList;
+  };
+
   return (
     `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -121,51 +135,7 @@ const createEditPointFormTemplate = (point, offers, destinations) => {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-
-              <div class="event__type-item">
-                <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" ${isTypeChecked('taxi', type)}>
-                <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" ${isTypeChecked('bus', type)}>
-                <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" ${isTypeChecked('train', type)}>
-                <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" ${isTypeChecked('ship', type)}>
-                <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" ${isTypeChecked('drive', type)}>
-                <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" ${isTypeChecked('flight', type)}>
-                <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in" ${isTypeChecked('check-in', type)}>
-                <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing" ${isTypeChecked('sightseeing', type)}>
-                <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant" ${isTypeChecked('restaurant', type)}>
-                <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-              </div>
+              ${renderEventTypeList()};
             </fieldset>
           </div>
         </div>
