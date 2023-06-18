@@ -22,11 +22,13 @@ export default class PointModel extends Observable {
 
     } catch(err) {
       this.#points = [];
-    } finally {
-
-      this._notify(UpdateType.POINTS);
-      this._notify(UpdateType.INIT);
+      this._notify(UpdateType.ERROR);
+      throw new Error('Server unavailable');
     }
+
+    this._notify(UpdateType.POINTS);
+    this._notify(UpdateType.INIT);
+
   }
 
   async updatePoint(updateType, update) {

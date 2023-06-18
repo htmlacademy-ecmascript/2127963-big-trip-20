@@ -87,5 +87,7 @@ const renderDestionationList = (destinations) => {
   return renderedDestinations;
 };
 
+const isTypeChecked = (value, type) => value === type ? 'checked' : '';
 
-export { comparePrice, compareDuration, humanizeDate, humanizeFullDate, humanizeTime, getDuration, getTimeDifference, isDateInPast, isDateInFUture, isSameDate, compareDates, areDatesEqual, getDestinationById, getOffersByType, renderDestionationList };
+
+export { comparePrice, compareDuration, humanizeDate, humanizeFullDate, humanizeTime, getDuration, getTimeDifference, isDateInPast, isDateInFUture, isSameDate, compareDates, areDatesEqual, getDestinationById, getOffersByType, renderDestionationList, isTypeChecked };

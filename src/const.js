@@ -47,6 +47,7 @@ const UpdateType = {
   DESTINATIONS: 'DESTINATIONS',
   OFFERS:'OFFERS',
   POINTS: 'POINTS',
+  ERROR: 'ERROR'
 };
 
 export { POINT_TYPES, SortType, FilterType, UserAction, UpdateType, DEFAULT_POINT };
