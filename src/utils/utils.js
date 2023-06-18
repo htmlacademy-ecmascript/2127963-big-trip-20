@@ -5,4 +5,6 @@ const getLastWord = (expression) => {
 
 };
 
-export { getLastWord };
+const capitalizeFirstLetter = (string) => `${string[0].toUpperCase()}${string.slice(1)}`;
+
+export { getLastWord, capitalizeFirstLetter };

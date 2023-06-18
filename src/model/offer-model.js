@@ -21,6 +21,8 @@ export default class OfferModel extends Observable {
 
     } catch(err) {
       this.#offers = [];
+      this._notify(UpdateType.ERROR);
+      throw new Error('Server unavailable');
     } finally {
 
       this._notify(UpdateType.OFFERS);

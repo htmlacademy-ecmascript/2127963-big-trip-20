@@ -9,6 +9,7 @@ import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import NoPointsView from '../view/no-points-view.js';
 import NewPointButtonView from '../view/new-point-button-view.js';
 import LoadingView from '../view/loading-view.js';
+import ServerErrorView from '../view/server-error-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import InfoPresenter from './info-presenter.js';
 import { compareDates } from '../utils/point.js';
@@ -31,6 +32,7 @@ export default class AppPresenter {
   #noPointsComponent = null;
   #newPointButtonComponent = null;
   #loadingComponent = new LoadingView();
+  #serverErrorComponent = new ServerErrorView();
 
   #pointPresenters = new Map();
   #newPointPresenter = null;
@@ -172,6 +174,12 @@ export default class AppPresenter {
   #handleModelEvent = (updateType, data) => {
 
     switch (updateType) {
+      case UpdateType.ERROR:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderServerError();
+        break;
+
       case UpdateType.PATCH:
         this.#pointPresenters.get(data.id).init(data);
         break;
@@ -251,6 +259,10 @@ export default class AppPresenter {
 
   #renderLoading() {
     render(this.#loadingComponent, this.#eventContainer);
+  }
+
+  #renderServerError() {
+    render(this.#serverErrorComponent, this.#eventContainer);
   }
 
   #clearBoard({resetSortType = false} = {}) {

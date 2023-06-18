@@ -21,6 +21,8 @@ export default class DestinationModel extends Observable {
 
     } catch(err) {
       this.#destinations = [];
+      this._notify(UpdateType.ERROR);
+      throw new Error('Server unavailable');
     } finally {
 
       this._notify(UpdateType.DESTINATIONS);
