@@ -114,6 +114,7 @@ export default class AppPresenter {
 
   init() {
     this.#renderBoard();
+    render(this.#newPointButtonComponent, this.#mainContainer);
   }
 
   #renderPoint(point) {
@@ -297,7 +298,5 @@ export default class AppPresenter {
 
     this.#renderEventList();
     this.#renderInfo();
-    render(this.#newPointButtonComponent, this.#mainContainer);
-
   }
 }
