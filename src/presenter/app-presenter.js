@@ -2,6 +2,8 @@ import SortingView from '../view/sorting-view.js';
 import EventsListView from '../view/events-list-view.js';
 import { render, remove, RenderPosition } from '../framework/render.js';
 import PointPresenter from './point-presenter.js';
+//import FilterPresenter from './presenter/filter-presenter.js';
+//import FilterModel from './model/filter-model.js';
 import NewPointPresenter from './new-point-presenter.js';
 import { comparePrice, compareDuration } from '../utils/point.js';
 import {filter} from '../utils/filter-util.js';
@@ -199,6 +201,9 @@ export default class AppPresenter {
         break;
 
       case UpdateType.MAJOR:
+        if (this.#isError) {
+          return;
+        }
         this.#clearBoard({resetSortType: true});
         this.#renderBoard();
         break;
