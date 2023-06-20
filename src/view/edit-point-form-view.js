@@ -5,7 +5,6 @@ import { POINT_TYPES } from '../const.js';
 import flatpickr from 'flatpickr';
 import he from 'he';
 
-
 import 'flatpickr/dist/flatpickr.min.css';
 
 const createEditPointFormTemplate = (point, offers, destinations) => {

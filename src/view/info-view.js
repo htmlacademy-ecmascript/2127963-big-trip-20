@@ -34,7 +34,6 @@ const createInfoTemplate = (points, destinations, offers) => {
     points.forEach((point) => {
       const infoDestination = getDestinationById(point, destinations).name;
       infoDestinations.push(infoDestination);
-
     });
 
     return (

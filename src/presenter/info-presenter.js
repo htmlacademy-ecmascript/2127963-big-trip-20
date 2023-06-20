@@ -28,9 +28,7 @@ export default class InfoPresenter {
 
     if (this.#points === 0) {
       this.#infoComponent.destroy();
-
     }
-
 
     if (previousInfoComponent === null) {
       render(this.#infoComponent, this.#infoContainer, RenderPosition.AFTERBEGIN);
@@ -40,7 +38,6 @@ export default class InfoPresenter {
     replace(this.#infoComponent, previousInfoComponent);
 
     remove(previousInfoComponent);
-
   }
 
   destroy() {
@@ -50,7 +47,6 @@ export default class InfoPresenter {
 
     remove(this.#infoComponent);
     this.#infoComponent = null;
-
   }
 }
 
