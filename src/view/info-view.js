@@ -24,17 +24,17 @@ const createInfoTemplate = (points, destinations, offers) => {
     if (points.length > 3) {
       return (
         `<h1 class="trip-info__title">
-        ${getDestinationById(points[points.length - 1], destinations).name} ... ${getDestinationById(points[0], destinations).name}
+        ${getDestinationById(points[0], destinations).name} &mdash; ... &mdash; ${getDestinationById(points[points.length - 1], destinations).name}
         </h1>`
       );
     }
 
     const infoDestinations = [];
 
-    for (let i = points.length - 1; i >= 0; i--) {
-      const infoDestination = getDestinationById(points[i], destinations).name;
+    points.forEach((point) => {
+      const infoDestination = getDestinationById(point, destinations).name;
       infoDestinations.push(infoDestination);
-    }
+    });
 
     return (
       `<h1 class="trip-info__title">
@@ -48,7 +48,7 @@ const createInfoTemplate = (points, destinations, offers) => {
       <div class="trip-info__main">
         ${createDestinationInfoTemplate()}
 
-        <p class="trip-info__dates">${humanizeDate(points[points.length - 1].dateFrom)}&nbsp;&mdash;&nbsp;${humanizeDate(points[0].dateTo)}</p>
+        <p class="trip-info__dates">${humanizeDate(points[0].dateFrom)}&nbsp;&mdash;&nbsp;${humanizeDate(points[points.length - 1].dateTo)}</p>
       </div>
 
       <p class="trip-info__cost">

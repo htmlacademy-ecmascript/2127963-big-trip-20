@@ -26,6 +26,10 @@ export default class InfoPresenter {
       offers: this.#offers
     });
 
+    if (this.#points === 0) {
+      this.#infoComponent.destroy();
+    }
+
     if (previousInfoComponent === null) {
       render(this.#infoComponent, this.#infoContainer, RenderPosition.AFTERBEGIN);
       return;
@@ -34,7 +38,15 @@ export default class InfoPresenter {
     replace(this.#infoComponent, previousInfoComponent);
 
     remove(previousInfoComponent);
+  }
 
+  destroy() {
+    if (this.#infoComponent === null) {
+      return;
+    }
+
+    remove(this.#infoComponent);
+    this.#infoComponent = null;
   }
 }
 

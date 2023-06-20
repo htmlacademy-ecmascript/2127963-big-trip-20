@@ -56,7 +56,7 @@ const isDateInFUture = (date) => dayjs().isBefore(date, 'D');
 
 const isSameDate = (date) => dayjs(date).isSame(dayjs(), 'D');
 
-const compareDates = (dateA, dateB) => dayjs(dateB).unix() - dayjs(dateA).unix();
+const compareDates = (dateA, dateB) => dayjs(dateA).unix() - dayjs(dateB).unix();
 
 
 const compareDuration = (pointA, pointB) => {
