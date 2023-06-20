@@ -7,24 +7,16 @@ export default class FilterPresenter {
   #filterContainer = null;
   #filterModel = null;
   #pointModel = null;
-  //#offerModel = null;
-  //#destinationModel = null;
 
   #filterComponent = null;
 
-  constructor({filterContainer, filterModel, pointModel/*, offerModel, destinationModel*/}) {
+  constructor({filterContainer, filterModel, pointModel}) {
     this.#filterContainer = filterContainer;
     this.#filterModel = filterModel;
     this.#pointModel = pointModel;
-    //this.#offerModel = offerModel;
-    //this.#destinationModel = destinationModel;
-
 
     this.#pointModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
-    //this.#offerModel.addObserver(this.#handleModelEvent);
-    //this.#destinationModel.addObserver(this.#handleModelEvent);
-
   }
 
   get filters() {

@@ -17,9 +17,6 @@ const createInfoTemplate = (points, destinations, offers) => {
   });
 
   const createDestinationInfoTemplate = () => {
-    /*if (destinations.length === 0) {
-      return '';
-    }*/
     if (points.length === 0) {
       return '';
     }
@@ -33,11 +30,6 @@ const createInfoTemplate = (points, destinations, offers) => {
     }
 
     const infoDestinations = [];
-
-    /*for (let i = points.length - 1; i >= 0; i--) {
-      const infoDestination = getDestinationById(points[i], destinations).name;
-      infoDestinations.push(infoDestination);
-    }*/
 
     points.forEach((point) => {
       const infoDestination = getDestinationById(point, destinations).name;

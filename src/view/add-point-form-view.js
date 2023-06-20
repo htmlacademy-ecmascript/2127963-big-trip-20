@@ -164,7 +164,7 @@ const createAddPointFormTemplate = (point, offers, destinations) => {
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}
-        ${point.dateFrom && point.dateTo /*&& selectedDestination?.name && point.basePrice*/
+        ${point.dateFrom && point.dateTo
       ? ''
       : 'disabled'}>${isSaving ? 'Saving...' : 'Save'}</button>
         <button class="event__reset-btn" type="reset">Cancel</button>
@@ -226,9 +226,6 @@ export default class AddPointFormView extends AbstractStatefulView {
     this._setState({
       basePrice: !Number.isNaN(price) ? Math.round(price) : previousPrice
     });
-    //const previousPrice = this._state.basePrice;
-    //const price = Number(evt.target.value);
-    //this.updateElement({ ...this._state, basePrice: !Number.isNaN(price) ? Math.round(price) : previousPrice});
   };
 
   #dateFromChangeHandler = ([userDate]) => {
@@ -242,7 +239,6 @@ export default class AddPointFormView extends AbstractStatefulView {
       dateTo: userDate,
     });
   };
-
 
   #setDateFrom = () => {
 
