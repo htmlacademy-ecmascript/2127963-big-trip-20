@@ -29,7 +29,7 @@ const createEditPointFormTemplate = (point, offers, destinations) => {
         type="text"
         name="event-destination"
         value="${he.encode(`${selectedDestination?.name}`)}"
-        list="destination-list-1">`
+        list="destination-list-1" required>`
       );
     }
     return (
@@ -38,7 +38,7 @@ const createEditPointFormTemplate = (point, offers, destinations) => {
       type="text"
       name="event-destination"
       value=""
-      list="destination-list-1">`
+      list="destination-list-1" required>`
     );
   };
 
@@ -135,7 +135,7 @@ const createEditPointFormTemplate = (point, offers, destinations) => {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-              ${renderEventTypeList()};
+              ${renderEventTypeList()}
             </fieldset>
           </div>
         </div>
@@ -165,10 +165,13 @@ const createEditPointFormTemplate = (point, offers, destinations) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${he.encode(`${basePrice}`)}">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${he.encode(`${basePrice}`)}" required>
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}
+        ${point.dateFrom && point.dateTo /*&& selectedDestination?.name && point.basePrice*/
+      ? ''
+      : 'disabled'}>${isSaving ? 'Saving...' : 'Save'}</button>
         <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>
         <button class="event__rollup-btn" type="button">
           <span class="visually-hidden">Open event</span>
@@ -226,10 +229,15 @@ export default class EditPointFormView extends AbstractStatefulView {
     );
   }
 
-  #priceHandler = (evt) => {
+  #priceChangeHandler = (evt) => {
     const previousPrice = this._state.basePrice;
     const price = Number(evt.target.value);
-    this.updateElement({ ...this._state, basePrice: !Number.isNaN(price) ? Math.round(price) : previousPrice});
+    this._setState({
+      basePrice: !Number.isNaN(price) ? Math.round(price) : previousPrice
+    });
+    //const previousPrice = this._state.basePrice;
+    //const price = Number(evt.target.value);
+    //this.updateElement({ ...this._state, basePrice: !Number.isNaN(price) ? Math.round(price) : previousPrice});
   };
 
   #dateFromChangeHandler = ([userDate]) => {
@@ -295,7 +303,7 @@ export default class EditPointFormView extends AbstractStatefulView {
       .addEventListener('click', this.#formDeleteClickHandler);
 
     this.element.querySelector('.event__input--price')
-      .addEventListener('change', this.#priceHandler);
+      .addEventListener('input', this.#priceChangeHandler);
 
     this.#setDateFrom();
     this.#setDateTo();

@@ -43,6 +43,7 @@ export default class AppPresenter {
   #areDestinationsLoaded = false;
   #areOffersLoaded = false;
   #arePointsLoaded = false;
+  #isError = false;
 
 
   #uiBlocker = new UiBlocker({
@@ -108,13 +109,19 @@ export default class AppPresenter {
   }
 
   #renderInfo() {
+    if (this.#pointModel.points.length === 0) {
+      if (this.#infoPresenter) {
+        this.#infoPresenter.destroy();
+      }
+      return;
+    }
     const points = this.#pointModel.points.sort((a, b) => compareDates(a.dateFrom, b.dateFrom));
     this.#infoPresenter.init(points, this.#destinationModel.destinations, this.#offerModel.offers);
   }
 
   init() {
     this.#renderBoard();
-    render(this.#newPointButtonComponent, this.#mainContainer);
+    //render(this.#newPointButtonComponent, this.#mainContainer);
   }
 
   #renderPoint(point) {
@@ -176,6 +183,7 @@ export default class AppPresenter {
 
     switch (updateType) {
       case UpdateType.ERROR:
+        this.#isError = true;
         this.#isLoading = false;
         remove(this.#loadingComponent);
         this.#renderServerError();
@@ -206,7 +214,7 @@ export default class AppPresenter {
         break;
 
       case UpdateType.INIT:
-        if (!this.#areDestinationsLoaded || !this.#areOffersLoaded || !this.#arePointsLoaded) {
+        if (!this.#areDestinationsLoaded || !this.#areOffersLoaded || !this.#arePointsLoaded || this.#isError) {
           return;
         }
         this.#isLoading = false;
@@ -253,8 +261,8 @@ export default class AppPresenter {
     render(this.#eventListComponent, this.#eventContainer);
 
 
-    this.#renderSort();
-    this.#renderEvents(this.points);
+    //this.#renderSort();
+    //this.#renderEvents(this.points);
 
   }
 
@@ -290,13 +298,21 @@ export default class AppPresenter {
       this.#renderLoading();
       return;
     }
+    render(this.#newPointButtonComponent, this.#mainContainer);
+    this.#renderEventList();
 
     if (this.points.length === 0) {
+      /*if (this.#infoPresenter) {
+        this.#infoPresenter.destroy();
+
+      }*/
+      this.#renderInfo();
       this.#renderNoPoints();
       return;
     }
 
-    this.#renderEventList();
+    this.#renderSort();
+    this.#renderEvents(this.points);
     this.#renderInfo();
   }
 }
